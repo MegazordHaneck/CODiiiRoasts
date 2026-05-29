@@ -1,0 +1,47 @@
+{
+  "architect": {
+    "light": "Hi {name}! You treat 'final' like a suggestion and 'minimal' like a personality trait.",
+    "contractor": "Hi {name}! You moved the stair again. The contractor felt that in their soul.",
+    "nuclear": "Hi {name}! Fourteen stair revisions and you still call it minimalism. Bold."
+  },
+  "engineer": {
+    "light": "Hi {name}! Your redlines are so thorough, even the redlines get redlines.",
+    "contractor": "Hi {name}! You discovered the drawings were wrong eight minutes after mobilization. Classic.",
+    "nuclear": "Hi {name}! Your entire personality is calculations in blue text. Even lunch has a markup."
+  },
+  "contractor": {
+    "light": "Hi {name}! You treat every RFI like it personally offended your crew.",
+    "contractor": "Hi {name}! You mobilized before the ink dried on the permit set. Respect.",
+    "nuclear": "Hi {name}! Your schedule says done. Reality says see you next fiscal year."
+  },
+  "gc": {
+    "light": "Hi {name}! You run coordination meetings that need their own coordination meeting.",
+    "contractor": "Hi {name}! Your submittal log is longer than the building code. Impressive.",
+    "nuclear": "Hi {name}! You promised float. The float filed for bankruptcy."
+  },
+  "owner": {
+    "light": "Hi {name}! You want champagne finishes on a soda budget. We admire the optimism.",
+    "contractor": "Hi {name}! Every meeting adds scope. Every scope adds a smile. Then VE.",
+    "nuclear": "Hi {name}! Luxury on a VE budget is your love language. The team speaks fluent panic."
+  },
+  "bim manager": {
+    "light": "Hi {name}! You're basically a therapist for Navisworks clashes. How are you holding up?",
+    "contractor": "Hi {name}! Your federated model has more drama than a design charrette.",
+    "nuclear": "Hi {name}! LOD 400 promise, LOD 200 reality. The gap is structural."
+  },
+  "pm": {
+    "light": "Hi {name}! Your action items have action items. It's action items all the way down.",
+    "contractor": "Hi {name}! The Gantt chart says green. The field says lol.",
+    "nuclear": "Hi {name}! You scheduled a meeting to discuss why there are too many meetings. Hero."
+  },
+  "specifier": {
+    "light": "Hi {name}! Your spec section has more addenda than the base document. Poetry.",
+    "contractor": "Hi {name}! 'Or equal' is doing a lot of work in your Division 08 section.",
+    "nuclear": "Hi {name}! Three pages to say 'use the good one.' Masterful."
+  },
+  "default": {
+    "light": "Hi {name}! Your coordination confidence is lower than a Monday morning submittal queue.",
+    "contractor": "Hi {name}! You treat RFIs like a hobby and deadlines like a rumor.",
+    "nuclear": "Hi {name}! Even CODiii's compliance scan needed a coffee after reviewing your workflow."
+  }
+}

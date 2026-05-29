@@ -1,0 +1,42 @@
+{
+  "architect": [
+    "Detected: excessive design revisions",
+    "Warning: stair relocated 14 times",
+    "Violation: minimalism claim unsubstantiated"
+  ],
+  "engineer": [
+    "Detected: redlines in blue text dependency",
+    "Warning: calc package still pending",
+    "Flagged: PE stamp queue overflow"
+  ],
+  "contractor": [
+    "Detected: mobilization before drawing review",
+    "Warning: RFI response time exceeds project lifespan",
+    "Violation: optimistic schedule syndrome"
+  ],
+  "gc": [
+    "Detected: coordination meeting exceeded budget",
+    "Warning: submittal log approaching infinity",
+    "Flagged: schedule float: theoretical"
+  ],
+  "owner": [
+    "Detected: luxury finish on VE budget",
+    "Warning: scope creep velocity critical",
+    "Violation: change order enthusiasm unchecked"
+  ],
+  "bim": [
+    "Detected: Navisworks clash therapy session #847",
+    "Warning: model federation confidence at 9%",
+    "Flagged: LOD promise vs reality mismatch"
+  ],
+  "pm": [
+    "Detected: meeting about meetings",
+    "Warning: action item recursion depth exceeded",
+    "Violation: Gantt chart optimism bias"
+  ],
+  "default": [
+    "Detected: coordination confidence below 12%",
+    "Warning: interdisciplinary friction elevated",
+    "Flagged: compliance scan completed with concern"
+  ]
+}

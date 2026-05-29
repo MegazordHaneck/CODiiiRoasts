@@ -1,0 +1,26 @@
+.terminal {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--terminal);
+  background: rgba(0, 0, 0, 0.55);
+  border: 1px solid rgba(110, 231, 183, 0.2);
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  min-height: 4rem;
+  line-height: 1.5;
+}
+
+.prompt {
+  color: var(--brand-primary);
+  margin-right: 0.5rem;
+}
+
+.cursor {
+  animation: blink 0.8s step-end infinite;
+}
+
+@keyframes blink {
+  50% {
+    opacity: 0;
+  }
+}

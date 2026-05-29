@@ -1,0 +1,33 @@
+version: 1
+applications:
+  - appRoot: .
+    backend:
+      phases:
+        build:
+          commands:
+            - npm ci
+            - npx ampx pipeline-deploy --branch $AWS_BRANCH --app-id $AWS_APP_ID
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            - npm run build
+      artifacts:
+        baseDirectory: dist
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - node_modules/**/*
+    customHeaders:
+      - pattern: "**/*"
+        headers:
+          - key: Cache-Control
+            value: public, max-age=0, must-revalidate
+    redirects:
+      - source: "/<*>"
+        target: "/index.html"
+        status: "200"

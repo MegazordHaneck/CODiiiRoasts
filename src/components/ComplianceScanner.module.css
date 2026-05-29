@@ -1,0 +1,66 @@
+.panel {
+  padding: 1.75rem 1.5rem 1.5rem;
+  border-radius: var(--radius);
+  background-color: #000;
+  background-image:
+    linear-gradient(rgba(233, 112, 36, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(233, 112, 36, 0.07) 1px, transparent 1px);
+  background-size: 28px 28px;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    0 24px 48px rgba(0, 0, 0, 0.35);
+  width: 100%;
+  max-width: 480px;
+}
+
+.label {
+  margin: 0 0 1rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+.label strong {
+  color: var(--brand-primary);
+  font-weight: 600;
+}
+
+.track {
+  position: relative;
+  height: 6px;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand-primary-dark), var(--brand-primary));
+  border-radius: inherit;
+  box-shadow: 0 0 12px var(--brand-glow);
+  transition: width 0.3s ease;
+}
+
+.percent {
+  display: block;
+  margin-top: 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--brand-primary);
+  text-align: center;
+}
+
+.glitch {
+  animation: glitch 0.25s steps(2) 2;
+}
+
+@keyframes glitch {
+  0% {
+    filter: none;
+  }
+  50% {
+    filter: hue-rotate(20deg) brightness(1.2);
+  }
+}
