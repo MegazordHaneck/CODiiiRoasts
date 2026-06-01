@@ -4,11 +4,12 @@ import styles from "./WebcamCapture.module.css";
 type Props = {
   photoUrl: string | null;
   onCapture: (url: string) => void;
+  compact?: boolean;
 };
 
 type Phase = "idle" | "countdown" | "preview";
 
-export function WebcamCapture({ photoUrl, onCapture }: Props) {
+export function WebcamCapture({ photoUrl, onCapture, compact = false }: Props) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const [phase, setPhase] = useState<Phase>(photoUrl ? "preview" : "idle");
@@ -85,7 +86,7 @@ export function WebcamCapture({ photoUrl, onCapture }: Props) {
 
   if (photoUrl && phase === "preview") {
     return (
-      <div className={styles.wrap}>
+      <div className={`${styles.wrap} ${compact ? styles.wrapCompact : ""}`}>
         <img src={photoUrl} alt="Your roast photo" className={styles.previewImg} />
         <button type="button" className={styles.secondaryBtn} onClick={() => void retake()}>
           Retake photo
@@ -95,7 +96,7 @@ export function WebcamCapture({ photoUrl, onCapture }: Props) {
   }
 
   return (
-    <div className={styles.wrap}>
+    <div className={`${styles.wrap} ${compact ? styles.wrapCompact : ""}`}>
       <div className={styles.videoFrame}>
         <video ref={videoRef} className={styles.video} playsInline muted />
         {phase === "countdown" && (

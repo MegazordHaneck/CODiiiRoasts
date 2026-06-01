@@ -6,6 +6,12 @@
   gap: 1rem;
 }
 
+.wrapCompact {
+  max-width: 100%;
+  gap: 0.45rem;
+  flex-shrink: 0;
+}
+
 .heading {
   margin: 0;
   font-size: 0.95rem;
@@ -14,10 +20,22 @@
   color: var(--text-primary);
 }
 
+.wrapCompact .heading {
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
 .platforms {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.65rem;
+}
+
+.platformsCompact {
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.4rem;
 }
 
 .platformBtn {
@@ -35,42 +53,33 @@
     transform 0.15s;
 }
 
+.platformsCompact .platformBtn {
+  padding: 0.55rem 0.25rem;
+  font-size: 0.72rem;
+  line-height: 1.15;
+  text-align: center;
+}
+
 .platformBtn:hover {
   transform: translateY(-1px);
   border-color: var(--brand-primary);
   background: rgba(233, 112, 36, 0.12);
 }
 
-.twitter {
-  border-color: rgba(255, 255, 255, 0.18);
+.instagram {
+  border-color: rgba(225, 48, 108, 0.35);
+}
+
+.platformsCompact .instagram {
+  grid-column: auto;
 }
 
 .linkedin {
   border-color: rgba(10, 102, 194, 0.35);
 }
 
-.linkedin:hover {
-  border-color: #0a66c2;
-  background: rgba(10, 102, 194, 0.15);
-}
-
 .facebook {
   border-color: rgba(24, 119, 242, 0.35);
-}
-
-.facebook:hover {
-  border-color: #1877f2;
-  background: rgba(24, 119, 242, 0.15);
-}
-
-.instagram {
-  border-color: rgba(225, 48, 108, 0.35);
-  grid-column: span 2;
-}
-
-.instagram:hover {
-  border-color: #e1306c;
-  background: rgba(225, 48, 108, 0.12);
 }
 
 .secondary {
@@ -78,6 +87,10 @@
   flex-wrap: wrap;
   gap: 0.5rem;
   justify-content: center;
+}
+
+.secondaryCompact {
+  gap: 0.35rem;
 }
 
 .ghostBtn {
@@ -90,6 +103,11 @@
   cursor: pointer;
 }
 
+.secondaryCompact .ghostBtn {
+  padding: 0.4rem 0.65rem;
+  font-size: 0.72rem;
+}
+
 .ghostBtn:hover {
   color: var(--brand-primary);
   border-color: var(--brand-primary);
@@ -100,6 +118,12 @@
   background: rgba(0, 0, 0, 0.35);
   border: 1px solid rgba(255, 255, 255, 0.08);
   border-radius: var(--radius);
+}
+
+.captionCompact {
+  padding: 0.5rem 0.65rem;
+  max-height: 5.5rem;
+  overflow-y: auto;
 }
 
 .captionLabel {
@@ -115,15 +139,19 @@
   margin: 0;
   font-family: inherit;
   font-size: 0.82rem;
-  line-height: 1.45;
+  line-height: 1.35;
   white-space: pre-wrap;
   color: var(--text-primary);
   word-break: break-word;
 }
 
+.captionCompact .captionText {
+  font-size: 0.7rem;
+}
+
 .status {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   text-align: center;
   color: var(--brand-primary);
 }

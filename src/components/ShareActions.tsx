@@ -11,21 +11,26 @@ type Props = {
   roast: string;
   getPngBlob: () => Promise<Blob | null>;
   fileName: string;
+  compact?: boolean;
 };
 
-export function ShareActions({ roast, getPngBlob, fileName }: Props) {
+export function ShareActions({ roast, getPngBlob, fileName, compact = false }: Props) {
   const caption = buildShareCaption(roast);
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
+  const [showCaption, setShowCaption] = useState(false);
 
   const copyCaption = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(caption);
       setCopied(true);
       setStatus("Caption copied!");
-      window.setTimeout(() => setCopied(false), 2500);
+      window.setTimeout(() => {
+        setCopied(false);
+        setStatus(null);
+      }, 2500);
     } catch {
-      setStatus("Could not copy — select the text below and copy manually.");
+      setStatus("Copy failed — use “Show caption”.");
     }
   }, [caption]);
 
@@ -54,12 +59,12 @@ export function ShareActions({ roast, getPngBlob, fileName }: Props) {
         });
         return;
       } catch {
-        /* user cancelled or failed */
+        /* cancelled */
       }
     }
     await downloadImage();
     await copyCaption();
-    setStatus("Image downloaded and caption copied — pick your app and paste.");
+    setStatus("Saved — paste in your app.");
   }, [caption, downloadImage, copyCaption, getPngBlob, fileName]);
 
   const openPlatform = useCallback(
@@ -69,17 +74,14 @@ export function ShareActions({ roast, getPngBlob, fileName }: Props) {
       if (platform === "instagram") {
         await downloadImage();
         await copyCaption();
-        setStatus("Image saved & caption copied. Open Instagram and add both.");
+        setStatus("Saved for Instagram");
         return;
       }
 
       const url = getShareUrl(platform, caption);
       if (!url) return;
 
-      if (platform === "facebook") {
-        await copyCaption();
-        setStatus("Caption copied — paste it when Facebook opens.");
-      }
+      if (platform === "facebook") await copyCaption();
 
       window.open(url, "_blank", "noopener,noreferrer,width=600,height=700");
     },
@@ -87,9 +89,9 @@ export function ShareActions({ roast, getPngBlob, fileName }: Props) {
   );
 
   return (
-    <div className={styles.wrap}>
-      <p className={styles.heading}>Share on your platform</p>
-      <div className={styles.platforms}>
+    <div className={`${styles.wrap} ${compact ? styles.wrapCompact : ""}`}>
+      <p className={styles.heading}>Post to</p>
+      <div className={`${styles.platforms} ${compact ? styles.platformsCompact : ""}`}>
         {SHARE_PLATFORMS.map((p) => (
           <button
             key={p.id}
@@ -98,27 +100,38 @@ export function ShareActions({ roast, getPngBlob, fileName }: Props) {
             onClick={() => void openPlatform(p.id)}
             title={p.hint}
           >
-            {p.label}
+            {compact ? p.label.split(" / ")[0] : p.label}
           </button>
         ))}
       </div>
 
-      <div className={styles.secondary}>
+      <div className={`${styles.secondary} ${compact ? styles.secondaryCompact : ""}`}>
         <button type="button" className={styles.ghostBtn} onClick={() => void shareNative()}>
-          Share / save image
+          Share
         </button>
         <button type="button" className={styles.ghostBtn} onClick={() => void downloadImage()}>
-          Download image
+          Save
         </button>
         <button type="button" className={styles.ghostBtn} onClick={() => void copyCaption()}>
-          {copied ? "Copied!" : "Copy caption"}
+          {copied ? "Copied" : "Caption"}
         </button>
+        {compact && (
+          <button
+            type="button"
+            className={styles.ghostBtn}
+            onClick={() => setShowCaption((v) => !v)}
+          >
+            {showCaption ? "Hide" : "Text"}
+          </button>
+        )}
       </div>
 
-      <div className={styles.captionPreview}>
-        <span className={styles.captionLabel}>Your post text</span>
-        <pre className={styles.captionText}>{caption}</pre>
-      </div>
+      {(!compact || showCaption) && (
+        <div className={`${styles.captionPreview} ${compact ? styles.captionCompact : ""}`}>
+          {!compact && <span className={styles.captionLabel}>Your post text</span>}
+          <pre className={styles.captionText}>{caption}</pre>
+        </div>
+      )}
 
       {status && <p className={styles.status}>{status}</p>}
     </div>

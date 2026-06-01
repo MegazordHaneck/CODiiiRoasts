@@ -1,0 +1,110 @@
+.page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  padding: 1.25rem 1rem 2rem;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.75rem;
+  box-sizing: border-box;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.75rem;
+  text-align: center;
+  color: var(--brand-primary);
+}
+
+.name {
+  margin: 0;
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.card {
+  width: 100%;
+  border-radius: var(--radius);
+  border: 2px solid var(--brand-primary);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+}
+
+.hint {
+  margin: 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.primary {
+  grid-column: span 2;
+  padding: 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--brand-primary-dark), var(--brand-primary));
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.secondary {
+  grid-column: span 2;
+  padding: 0.85rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--text-primary);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.platforms {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.45rem;
+}
+
+.platform {
+  padding: 0.75rem;
+  border-radius: var(--radius);
+  border: 1px solid rgba(233, 112, 36, 0.35);
+  background: rgba(233, 112, 36, 0.1);
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.caption {
+  margin: 0;
+  padding: 0.75rem;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  background: rgba(0, 0, 0, 0.35);
+  border-radius: var(--radius);
+  color: var(--text-muted);
+  word-break: break-word;
+}
+
+.loading,
+.error {
+  text-align: center;
+  margin: 2rem 0;
+  color: var(--text-muted);
+}
+
+.error {
+  color: #f87171;
+}

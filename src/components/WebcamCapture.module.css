@@ -7,6 +7,23 @@
   max-width: 400px;
 }
 
+.wrapCompact {
+  max-width: 360px;
+  gap: 0.65rem;
+  flex-shrink: 0;
+}
+
+.wrapCompact .videoFrame {
+  max-height: min(28vh, 220px);
+  aspect-ratio: 4 / 3;
+  width: 100%;
+}
+
+.wrapCompact .primaryBtn {
+  padding: 0.7rem 1.25rem;
+  font-size: 0.95rem;
+}
+
 .videoFrame {
   position: relative;
   width: 100%;

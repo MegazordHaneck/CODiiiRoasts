@@ -8,6 +8,7 @@ type Outputs = {
   custom?: {
     roastUrl?: string;
     speakUrl?: string;
+    shareApiUrl?: string;
   };
 };
 

@@ -12,6 +12,7 @@ type Props = {
   roast: string;
   photoUrl?: string | null;
   qrUrl?: string;
+  compact?: boolean;
 };
 
 const W = 540;
@@ -20,7 +21,7 @@ const FOOTER_H = 280;
 const H = PHOTO_H + FOOTER_H;
 
 export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function RoastShareCard(
-  { name, roast, photoUrl, qrUrl = "https://codiii.com" },
+  { name, roast, photoUrl, qrUrl = "https://codiii.com", compact = false },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -95,7 +96,7 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
 
   useEffect(() => {
     void drawCard();
-  }, [drawCard]);
+  }, [drawCard, qrUrl]);
 
   useImperativeHandle(
     ref,
@@ -115,23 +116,68 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
 
   return (
     <div className={styles.wrap}>
-      <canvas ref={canvasRef} className={styles.canvas} aria-label={`Roast share card for ${name}`} />
+      <canvas
+        ref={canvasRef}
+        className={`${styles.canvas} ${compact ? styles.canvasCompact : ""}`}
+        aria-label={`Roast share card for ${name}`}
+      />
     </div>
   );
 });
 
 function drawRoastedBadge(ctx: CanvasRenderingContext2D) {
-  const x = 20;
-  const y = 20;
-  const bw = 132;
-  const bh = 40;
+  const cx = 88;
+  const cy = 48;
+  const angle = (-9 * Math.PI) / 180;
+
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angle);
+
+  drawBadgeFlames(ctx);
+
+  const bw = 172;
+  const bh = 54;
+  ctx.shadowColor = "rgba(255, 85, 0, 0.85)";
+  ctx.shadowBlur = 18;
   ctx.fillStyle = "#e97024";
   ctx.beginPath();
-  ctx.roundRect(x, y, bw, bh, 6);
+  ctx.roundRect(-bw / 2, -bh / 2, bw, bh, 9);
   ctx.fill();
-  ctx.fillStyle = "#000";
-  ctx.font = "bold 22px Inter, sans-serif";
-  ctx.fillText("ROASTED", x + 14, y + 28);
+  ctx.shadowBlur = 0;
+
+  ctx.strokeStyle = "#ff6b00";
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  ctx.fillStyle = "#0a0a0a";
+  ctx.font = "bold 32px Inter, sans-serif";
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText("ROASTED", 0, 1);
+
+  ctx.restore();
+}
+
+function drawBadgeFlames(ctx: CanvasRenderingContext2D) {
+  const flames: { x: number; y: number; h: number; color: string }[] = [
+    { x: -72, y: 18, h: 28, color: "#ff6b2b" },
+    { x: -48, y: 22, h: 34, color: "#ff3d00" },
+    { x: -20, y: 24, h: 30, color: "#ff9800" },
+    { x: 18, y: 24, h: 32, color: "#ff5500" },
+    { x: 48, y: 22, h: 36, color: "#ff3d00" },
+    { x: 72, y: 18, h: 28, color: "#ff6b2b" },
+    { x: 0, y: 28, h: 38, color: "#fff176" },
+  ];
+
+  for (const f of flames) {
+    ctx.fillStyle = f.color;
+    ctx.beginPath();
+    ctx.moveTo(f.x, f.y);
+    ctx.quadraticCurveTo(f.x + 6, f.y - f.h * 0.6, f.x + 12, f.y);
+    ctx.quadraticCurveTo(f.x + 6, f.y - f.h * 0.35, f.x, f.y);
+    ctx.fill();
+  }
 }
 
 function loadImage(src: string): Promise<HTMLImageElement> {
