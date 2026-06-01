@@ -29,13 +29,15 @@ export function isRoastSafe(
 
 export { isRoastRepetitive };
 
-export function corsHeaders(origin = "*") {
+export function corsHeaders(_origin?: string) {
+  /** CORS is handled by Lambda Function URL config in amplify/backend.ts — do not duplicate here. */
   return {
-    "Access-Control-Allow-Origin": origin,
-    "Access-Control-Allow-Headers": "Content-Type",
-    "Access-Control-Allow-Methods": "POST, OPTIONS",
     "Content-Type": "application/json",
   };
+}
+
+export function jsonHeaders() {
+  return { "Content-Type": "application/json" };
 }
 
 export type Intensity = "light" | "contractor" | "nuclear" | "nsfw";

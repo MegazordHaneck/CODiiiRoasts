@@ -31,7 +31,7 @@ shareBucket.grantReadWrite(backend.share.resources.lambda);
 backend.share.addEnvironment("SHARE_BUCKET_NAME", shareBucket.bucketName);
 backend.share.addEnvironment(
   "APP_ORIGIN",
-  process.env.APP_ORIGIN ?? "https://main.draz2nrbxwj96.amplifyapp.com",
+  process.env.APP_ORIGIN ?? "https://roasts.codiii.com",
 );
 backend.share.addEnvironment("SHARE_FROM_EMAIL", process.env.SHARE_FROM_EMAIL ?? "");
 backend.share.addEnvironment("SES_REGION", process.env.SES_REGION ?? "ca-central-1");
@@ -50,31 +50,34 @@ backend.share.resources.lambda.addToRolePolicy(
   }),
 );
 
+const BOOTH_ORIGINS = [
+  "https://roasts.codiii.com",
+  "https://main.draz2nrbxwj96.amplifyapp.com",
+  "http://localhost:5173",
+];
+
+function functionUrlCors(methods: HttpMethod[]) {
+  return {
+    allowedOrigins: BOOTH_ORIGINS,
+    allowedMethods: methods,
+    allowedHeaders: ["*"],
+    maxAge: Duration.hours(1),
+  };
+}
+
 const roastUrl = backend.roast.resources.lambda.addFunctionUrl({
   authType: FunctionUrlAuthType.NONE,
-  cors: {
-    allowedOrigins: ["*"],
-    allowedMethods: [HttpMethod.POST],
-    allowedHeaders: ["*"],
-  },
+  cors: functionUrlCors([HttpMethod.POST, HttpMethod.OPTIONS]),
 });
 
 const speakUrl = backend.speak.resources.lambda.addFunctionUrl({
   authType: FunctionUrlAuthType.NONE,
-  cors: {
-    allowedOrigins: ["*"],
-    allowedMethods: [HttpMethod.POST],
-    allowedHeaders: ["*"],
-  },
+  cors: functionUrlCors([HttpMethod.POST, HttpMethod.OPTIONS]),
 });
 
 const shareApiUrl = backend.share.resources.lambda.addFunctionUrl({
   authType: FunctionUrlAuthType.NONE,
-  cors: {
-    allowedOrigins: ["*"],
-    allowedMethods: [HttpMethod.GET, HttpMethod.POST],
-    allowedHeaders: ["*"],
-  },
+  cors: functionUrlCors([HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS]),
 });
 
 backend.addOutput({

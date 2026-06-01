@@ -72,7 +72,7 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
       const buffer = Buffer.from(await legacy.arrayBuffer());
       return {
         statusCode: 200,
-        headers: { ...corsHeaders(), "Content-Type": "audio/mpeg" },
+        headers: { "Content-Type": "audio/mpeg" },
         isBase64Encoded: true,
         body: buffer.toString("base64"),
       };
@@ -82,7 +82,6 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        ...corsHeaders(),
         "Content-Type": "audio/mpeg",
       },
       isBase64Encoded: true,
