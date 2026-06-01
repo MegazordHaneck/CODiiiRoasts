@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { clearNsfwSession } from "../lib/nsfwAccess";
 import type { Attendee, Intensity, RoastResult, Screen, SessionRecord } from "../types";
 
 const STORAGE_KEY = "codiii-roasts-settings";
@@ -26,6 +27,8 @@ type BoothContextValue = {
   setAttendee: (attendee: Attendee) => void;
   intensity: Intensity;
   setIntensity: (intensity: Intensity) => void;
+  nsfwPin: string | null;
+  setNsfwPin: (pin: string | null) => void;
   roast: RoastResult | null;
   setRoast: (roast: RoastResult | null) => void;
   webcamPhotoUrl: string | null;
@@ -45,7 +48,13 @@ const BoothContext = createContext<BoothContextValue | null>(null);
 function loadSettings(): BoothSettings {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...defaultSettings, ...JSON.parse(raw) };
+    if (raw) {
+      const parsed = { ...defaultSettings, ...JSON.parse(raw) } as BoothSettings;
+      if (parsed.defaultIntensity === "nsfw") {
+        parsed.defaultIntensity = "contractor";
+      }
+      return parsed;
+    }
   } catch {
     /* ignore */
   }
@@ -56,6 +65,7 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
   const [screen, setScreen] = useState<Screen>("attract");
   const [attendee, setAttendeeState] = useState<Attendee | null>(null);
   const [intensity, setIntensity] = useState<Intensity>(loadSettings().defaultIntensity);
+  const [nsfwPin, setNsfwPin] = useState<string | null>(null);
   const [roast, setRoast] = useState<RoastResult | null>(null);
   const [webcamPhotoUrl, setWebcamPhotoUrl] = useState<string | null>(null);
   const [roastSpeechBuffer, setRoastSpeechBuffer] = useState<ArrayBuffer | null>(null);
@@ -90,6 +100,8 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
     setRoast(null);
     setWebcamPhotoUrl(null);
     setRoastSpeechBuffer(null);
+    setNsfwPin(null);
+    clearNsfwSession();
     setIntensity(loadSettings().defaultIntensity);
     setScreen("attract");
   }, []);
@@ -106,6 +118,8 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
       setAttendee,
       intensity,
       setIntensity,
+      nsfwPin,
+      setNsfwPin,
       roast,
       setRoast,
       webcamPhotoUrl,
@@ -123,6 +137,7 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
       screen,
       attendee,
       intensity,
+      nsfwPin,
       roast,
       webcamPhotoUrl,
       roastSpeechBuffer,

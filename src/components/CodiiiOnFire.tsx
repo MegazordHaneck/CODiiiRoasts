@@ -39,6 +39,15 @@ const TIER: Record<
     eyes: "stressed",
     charred: true,
   },
+  nsfw: {
+    flame: 4,
+    headFill: "#6b2d5c",
+    headSide: "#4a1f40",
+    headTop: "#8e3d72",
+    mouth: "grimace",
+    eyes: "stressed",
+    charred: true,
+  },
 };
 
 export function CodiiiOnFire({ intensity, size = 88, active = false }: Props) {
@@ -51,7 +60,7 @@ export function CodiiiOnFire({ intensity, size = 88, active = false }: Props) {
       aria-hidden
     >
       <svg className={styles.svg} viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
-        <Flames tier={t.flame} />
+        <Flames tier={t.flame === 4 ? 4 : t.flame} />
         <g className={styles.mascot}>
           <path
             d="M28 38 L92 38 L102 62 L102 92 L18 92 L18 62 Z"
@@ -69,14 +78,15 @@ export function CodiiiOnFire({ intensity, size = 88, active = false }: Props) {
             </>
           )}
           <line x1="44" y1="36" x2="42" y2="22" stroke="#121212" strokeWidth="1.5" />
-          <circle cx="42" cy="20" r="3.5" fill={intensity === "nuclear" ? "#666" : "#fff"} stroke="#121212" strokeWidth="1" />
+          <circle cx="42" cy="20" r="3.5" fill={intensity === "nuclear" || intensity === "nsfw" ? "#666" : "#fff"} stroke="#121212" strokeWidth="1" />
           <line x1="76" y1="36" x2="78" y2="18" stroke="#121212" strokeWidth="1.5" />
-          <circle cx="78" cy="16" r="3.5" fill={intensity === "nuclear" ? "#666" : "#fff"} stroke="#121212" strokeWidth="1" />
+          <circle cx="78" cy="16" r="3.5" fill={intensity === "nuclear" || intensity === "nsfw" ? "#666" : "#fff"} stroke="#121212" strokeWidth="1" />
           <rect x="38" y="52" width="44" height="32" rx="3" fill="#0a0a0a" />
           <Eyes variant={t.eyes} />
           <Mouth variant={t.mouth} />
         </g>
-        {t.flame >= 2 && <Flames tier={t.flame} front />}
+        {t.flame >= 2 && t.flame < 4 && <Flames tier={t.flame} front />}
+        {t.flame === 4 && <Flames tier={4} front />}
       </svg>
     </div>
   );
@@ -90,6 +100,19 @@ function Flames({ tier, front }: { tier: number; front?: boolean }) {
         <path className={styles.flameA} d="M52 95 Q54 78 58 95 Z" fill="#ff9a3c" />
         <path className={styles.flameB} d="M60 96 Q62 76 66 96 Z" fill="#ff6b2b" />
         <path className={styles.flameC} d="M68 95 Q70 80 74 95 Z" fill="#ff9a3c" />
+      </g>
+    );
+  }
+  if (tier === 4) {
+    return (
+      <g className={styles.flames} opacity={opacity}>
+        <path className={styles.flameA} d="M20 104 Q22 40 38 104 Z" fill="#ff0044" />
+        <path className={styles.flameB} d="M42 108 Q44 28 58 108 Z" fill="#cc0066" />
+        <path className={styles.flameC} d="M64 108 Q66 32 78 108 Z" fill="#ff2200" />
+        <path className={styles.flameD} d="M86 104 Q88 44 100 104 Z" fill="#ff5500" />
+        <path className={styles.flameE} d="M4 94 Q0 48 16 98 Z" fill="#ff66aa" />
+        <path className={styles.flameF} d="M106 94 Q112 42 118 98 Z" fill="#ff66aa" />
+        <path className={styles.flameG} d="M52 110 Q56 18 64 110 Z" fill="#ffe0f0" opacity="0.65" />
       </g>
     );
   }

@@ -26,6 +26,10 @@
   animation: shake 0.22s ease-in-out infinite;
 }
 
+.nsfw .mascot {
+  animation: shake 0.18s ease-in-out infinite;
+}
+
 .active.light .flames {
   filter: drop-shadow(0 0 8px #ff9a3c);
 }
@@ -36,6 +40,10 @@
 
 .active.nuclear .flames {
   filter: drop-shadow(0 0 16px #ff2200);
+}
+
+.active.nsfw .flames {
+  filter: drop-shadow(0 0 18px #e040a0);
 }
 
 .active {
@@ -82,6 +90,16 @@
 .nuclear .flameF,
 .nuclear .flameG {
   animation: flicker 0.35s ease-in-out infinite;
+}
+
+.nsfw .flameA,
+.nsfw .flameB,
+.nsfw .flameC,
+.nsfw .flameD,
+.nsfw .flameE,
+.nsfw .flameF,
+.nsfw .flameG {
+  animation: flicker 0.28s ease-in-out infinite;
 }
 
 @keyframes flicker {

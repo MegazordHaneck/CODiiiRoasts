@@ -1,4 +1,5 @@
 import type { Intensity } from "../types";
+import { AEC_STEREOTYPE_TROPES } from "../content/aec-stereotypes";
 
 /** Phrases that read as “same roast again” — block in API + client */
 export const BANNED_ROAST_PHRASES = [
@@ -32,81 +33,139 @@ const OPENERS = [
 const COMBO_NUCLEAR = {
   hooks: [
     "{name}, your {noun}",
-    "{name} — your {noun}",
+    "{name} — classic {noun}",
     "So {name}, the {noun}",
     "{name}, that {noun}",
+    "Every {role} has a {noun} — yours is special, {name}.",
   ],
   nouns: [
-    "RFI queue",
-    "submittal log",
-    "coordination plan",
-    "drawing set",
-    "Friday email",
-    "lookahead",
+    "render-to-field gap",
+    "LOD slide deck",
+    "AHJ review",
+    "IFC Friday drop",
+    "floating stair detail",
+    "see-structural note",
+    "or-equal submittal",
+    "blame matrix",
+    "entitlement timeline",
+    "Revit recovery file",
+    "OAC roundtable",
     "clash report",
-    "VE session",
-    "site logistics plan",
-    "closeout binder",
-    "buyout spreadsheet",
-    "punch list",
-    "OAC agenda",
-    "BIM execution plan",
+    "VE that killed the facade",
     "permit set",
+    "superintendent side-eye",
   ],
   punches: [
-    "isn't a plan — it's a threat letter to productivity.",
-    "has more drama than the project budget.",
-    "is why the field drinks on Tuesdays.",
-    "should be studied by future civilizations.",
-    "is proof optimism can be hazardous.",
-    "just became someone's entire quarter.",
-    "is how you turn peace into paperwork.",
-    "could tank a stock portfolio.",
-    "is the reason subs don't answer the phone.",
-    "reads like a roast already — so here we are.",
-    "is structural — the building isn't.",
-    "is why 'minor' is doing heavy lifting.",
+    "is the whole AEC industry in one PDF.",
+    "is why design-bid-build should be design-bid-blame.",
+    "is structural — your story isn't.",
+    "just became a case study in coping.",
+    "is why the trades have a group chat without you.",
+    "reads like a stereotype — because it is.",
+    "is MEP losing the ceiling war again.",
+    "is architect site-visit cosplay in document form.",
+    "is GC schedule fiction with better fonts.",
+    "is proof the model and reality broke up.",
+    "is why 'contractor shall verify' exists.",
+    "could tank morale faster than concrete.",
   ],
 };
 
 const COMBO_CONTRACTOR = {
-  hooks: ["Hi {name}! Your {noun}", "{name}, your {noun}"],
+  hooks: ["Hi {name}! Your {noun}", "{name}, your {noun}", "Field truth, {name}: your {noun}"],
   nouns: [
-    "mobilization date",
-    "daily report",
-    "toolbox talk",
-    "as-built sketch",
-    "temp power plan",
-    "concrete pour sequence",
-    "RFI thread",
-    "schedule update",
+    "mobilization on 50% DD",
+    "RFI photo attachment",
+    "issued-for-construction dare",
+    "change order smile",
+    "daily 'waiting on design'",
+    "as-built fiction",
+    "temp shoring",
+    "buyout optimism",
   ],
   punches: [
-    "is optimistic — the drawings are not.",
-    "is basically 'waiting on design' with confidence.",
-    "could win an award for creative patience.",
-    "is why the superintendent side-eyes you.",
-    "has more revisions than the architectural set.",
-    "is field code for 'we'll figure it out.'",
+    "is why supers trust tape measures more than architects.",
+    "is design-bid-blame in hi-vis.",
+    "is field code for 'we'll fight it out in the trench.'",
+    "has more revisions than your patience.",
+    "is the subcontractor stereotype come true.",
+    "is why the spec is a novel nobody finished.",
+  ],
+};
+
+const COMBO_NSFW = {
+  hooks: [
+    "{name}, your {noun}",
+    "{name} — damn, your {noun}",
+    "Mean AEC roast for {name}: your {noun}",
+    "{name}, that {noun}",
+    "Stereotype check, {name}: your {noun}",
+    "I see you, {name} — your {noun}",
+    "Late-night roast for {name}: your {noun}",
+    "{name}, the trades are talking about your {noun}",
+  ],
+  nouns: [
+    "architect render",
+    "black-turtleneck schematic",
+    "structural stamp-and-run",
+    "MEP plenum surrender",
+    "BIM LOD lie",
+    "GC float ghost",
+    "owner iconic-on-a-budget brief",
+    "600-page door spec",
+    "Navisworks divorce",
+    "Friday IFC drop",
+    "see-structural shrug",
+    "Procore screaming wall",
+    "revision cloud weather system",
+    "coordination WTF meeting",
+    "interpretive dance detail",
+    "hammer-swing red-squirrel energy",
+    "AI replacement slide",
+    "AHJ boss fight",
+    "entitlement fan fiction",
+    "punch list hate mail",
+    "floating stair delusion",
+    "or-equal submittal trap",
+  ],
+  punches: [
+    "is the whole conference laughing at your discipline.",
+    "is why ironworkers drink and models cry.",
+    "is design vs field beef in one PDF.",
+    "is AHJ energy — petty and undefeated.",
+    "is aggressively AEC and meaner than nuclear.",
+    "is why subs put you on mute.",
+    "is entitlement astrology with a stamp.",
+    "is VE deleting the only thing the owner could spell.",
+    "is floating-stair physics rage.",
+    "is specifier door-swing mythology.",
+    "is superintendent therapy in document form.",
+    "is three beats of polite 'what the F@#% is this?'",
+    "is #AI'sB#@$H energy with a title block.",
+    "is constructibility's villain origin story.",
+    "is why 'minor' needs a support group.",
   ],
 };
 
 const COMBO_LIGHT = {
-  hooks: ["Hi {name}! Your {noun}", "Hey {name} — your {noun}"],
+  hooks: ["Hi {name}! Your {noun}", "Hey {name} — your {noun}", "{name}, classic {noun}"],
   nouns: [
-    "inbox",
-    "meeting cadence",
-    "file naming",
-    "coordination call",
-    "markup style",
-    "calendar",
+    "Revit hiccup excuse",
+    "coordination call with no model",
+    "FINAL folder",
+    "AHJ comment letter",
+    "sheet index",
+    "VE option",
+    "Teams 'available' status",
+    "markup cloud",
   ],
   punches: [
-    "is giving 'we'll circle back' energy.",
-    "needs its own project manager.",
-    "is why PDF stands for Pretty Frustrating Document.",
-    "is a lifestyle at this point.",
-    "could be a sitcom.",
+    "is peak AEC cosplay.",
+    "is why PDF means Pretty Frustrating Document.",
+    "is design-bid-blame waiting to happen.",
+    "is giving architect-never-on-site energy.",
+    "could be a sitcom pilot.",
+    "is MEP losing the ceiling war again.",
   ],
 };
 
@@ -163,18 +222,26 @@ export function generateCombinatorialRoast(
   name: string,
   intensity: Intensity,
   seed: number,
+  role = "AEC professional",
 ): string {
   const combo =
-    intensity === "nuclear"
-      ? COMBO_NUCLEAR
-      : intensity === "contractor"
-        ? COMBO_CONTRACTOR
-        : COMBO_LIGHT;
+    intensity === "nsfw"
+      ? COMBO_NSFW
+      : intensity === "nuclear"
+        ? COMBO_NUCLEAR
+        : intensity === "contractor"
+          ? COMBO_CONTRACTOR
+          : COMBO_LIGHT;
 
   const hook = pick(combo.hooks, seed)
     .replace(/\{name\}/g, name)
+    .replace(/\{role\}/g, role)
     .replace(/\{noun\}/g, pick(combo.nouns, seed + 7));
   const punch = pick(combo.punches, seed + 13);
+  const trope = pick(AEC_STEREOTYPE_TROPES, seed + 19);
+  if (seed % 5 === 0) {
+    return `${hook} ${punch} (${trope} energy.)`;
+  }
   return `${hook} ${punch}`;
 }
 
@@ -194,24 +261,21 @@ export function wrapIntroRoast(
 }
 
 export const CREATIVE_ANGLES = [
-  "Compare their habit to a specific AEC document (RFI log, submittal, clash report, OAC deck).",
-  "Roast the gap between what they said in intro and what the field actually sees.",
-  "Use one construction-site metaphor — steel, mud, crane, pour, then the insult.",
-  "Punch schedule fantasy vs reality — no CODiii meta jokes.",
-  "Call out a painfully specific deliverable they'd send Friday at 4:58 PM.",
-  "Mock an overconfident email they definitely sent this week.",
-  "Reference their company or role if mentioned — make it feel personal.",
-  "Fake sympathy, then twist the knife — conference tone.",
-  "Pretend to praise their process, then reveal why it's chaos.",
-  "Compare their workflow to a bad subcontractor habit.",
-  "Roast coordination theater — meetings, matrices, color-coded blame.",
-  "Target BIM/drawing/submittal pain matching their discipline.",
-  "Use a one-liner opener, not always 'that explains why'.",
-  "If nuclear intensity: be blunt, memorable, no soft landing.",
-  "Reference something they literally said in the intro transcript.",
-  "Invent a fake metric ('RFI velocity', 'redline G-force') and roast it.",
-  "Roast handoffs between design and field — who's losing.",
-  "Mock their version control or file naming if implied.",
-  "Compare their project to a reality show — specific episode energy.",
-  "End on a punchy sentence under 12 words.",
+  ...AEC_STEREOTYPE_TROPES.map((t) => `Lean into stereotype: ${t}.`),
+  "Architect: render people on roof, no headroom in section, Horizon/Nexus project name.",
+  "Structural: pin connection religion, stamp Friday, calcs vs sheet fiction.",
+  "MEP: plenum war lost, Copy of Copy of Duct family, coordinates week 48.",
+  "GC: float ghosted, blame matrix, recovery narrative audiobook.",
+  "BIM: LOD 500 slide, LOD 200 ceiling, clash names as comedy.",
+  "Owner: iconic vision, strip-mall budget, owner directive curse.",
+  "Contractor: RFI lifestyle, mobilized on wrong sheet, supers vs design.",
+  "Specifier: door hardware religion, or-equal trap, 600 pages of pain.",
+  "PM: meeting breeds meeting, RAID screams DESIGN, Gantt astrology.",
+  "Contrast intro vs superintendent reality.",
+  "AHJ / permit / entitlement final boss.",
+  "Friday 4:58 transmittal damage.",
+  "Company name + discipline cliché in one punch.",
+  "If nuclear: two tropes, one brutal line.",
+  "If mean mode: 3-4 sentence vulgar prose — revision clouds / coordination meeting / detail section beats.",
+  "No generic workflow chaos — insider AEC only.",
 ];

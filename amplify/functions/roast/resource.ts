@@ -6,6 +6,7 @@ export const roast = defineFunction({
   environment: {
     OPENAI_API_KEY: secret("OPENAI_API_KEY"),
     ROAST_PROVIDER: "openai",
+    NSFW_PIN: secret("NSFW_PIN"),
   },
   timeoutSeconds: 30,
 });

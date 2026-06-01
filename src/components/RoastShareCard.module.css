@@ -12,9 +12,16 @@
 }
 
 .canvasCompact {
-  max-height: min(34vh, 280px);
+  max-height: min(52vh, 520px);
   width: auto;
   height: auto;
   object-fit: contain;
 }
 
+.canvasBooth {
+  display: block;
+  height: min(88dvh, 940px);
+  width: auto;
+  max-width: min(calc(100vw - 22rem), 860px);
+  object-fit: contain;
+}

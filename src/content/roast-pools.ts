@@ -1,4 +1,5 @@
 import type { Intensity } from "../types";
+import { getBurnExtensions } from "./burn-extensions";
 
 export type RolePoolKey =
   | "architect"
@@ -9,6 +10,15 @@ export type RolePoolKey =
   | "bim manager"
   | "pm"
   | "specifier"
+  | "civil"
+  | "mep"
+  | "mep_trade"
+  | "envelope"
+  | "regulatory"
+  | "superintendent"
+  | "commissioning"
+  | "sustainability"
+  | "estimator"
   | "default";
 
 /** Universal lines work for any role — largest pool for expo volume */
@@ -89,9 +99,10 @@ const UNIVERSAL: Record<Intensity, string[]> = {
     "Hi {name}! You call it done — reality files an appeal.",
     "Hi {name}! Your legacy is RFIs that outlive us all.",
   ],
+  nsfw: [],
 };
 
-const ROLE_POOLS: Record<RolePoolKey, Record<Intensity, string[]>> = {
+const ROLE_POOLS: Record<RolePoolKey, Partial<Record<Intensity, string[]>>> = {
   architect: {
     light: [
       "Hi {name}! 'Final' is your favorite suggestion.",
@@ -230,22 +241,90 @@ const ROLE_POOLS: Record<RolePoolKey, Record<Intensity, string[]>> = {
       "Hi {name}! Your substitution clause is a escape hatch factory.",
     ],
   },
+  civil: {
+    light: [
+      "Hi {name}! Your grading plan is poetry — your invert spot is a lie.",
+      "Hi {name}! You treat the survey like a suggestion until something doesn't fit.",
+    ],
+    contractor: [
+      "Hi {name}! Your utility coordination is a phone tree of despair.",
+      "Hi {name}! Your paving section shows smooth — the pothole shows truth.",
+    ],
+    nuclear: [
+      "Hi {name}! Your entitlement timeline is fan fiction with a stamp.",
+      "Hi {name}! You call it sitework — the AHJ calls it content.",
+    ],
+  },
+  mep: {
+    light: [
+      "Hi {name}! Your reflected ceiling plan is where MEP goes to hide.",
+      "Hi {name}! You love a plenum — the plenum doesn't love you back.",
+    ],
+    contractor: [
+      "Hi {name}! Your equipment submittal is 'or equal' gymnastics.",
+      "Hi {name}! Your coordination on ceiling height is a war crime — professionally.",
+    ],
+    nuclear: [
+      "Hi {name}! Your design drawings start with NOT FOR CONSTRUCTION — honest.",
+      "Hi {name}! You coordinate MEP like jazz — nobody knows the key.",
+    ],
+  },
+  mep_trade: {
+    light: ["Hi {name}! Your rough-in is where design dreams go to die."],
+    contractor: ["Hi {name}! Your TAB report is truth — your coordination was fiction."],
+    nuclear: ["Hi {name}! You own the plenum — the architect thought it was decorative."],
+  },
+  envelope: {
+    light: ["Hi {name}! Your air barrier detail is a rumor at the laps."],
+    contractor: ["Hi {name}! Your cladding mock-up passed — the field failed."],
+    nuclear: ["Hi {name}! Water found the gap — it left a review."],
+  },
+  regulatory: {
+    light: ["Hi {name}! Your plan check comment is the real schedule."],
+    contractor: ["Hi {name}! You are the AHJ — fear is justified."],
+    nuclear: ["Hi {name}! Your redlines are petty — and undefeated."],
+  },
+  superintendent: {
+    light: ["Hi {name}! Your daily huddle is stand-up about design."],
+    contractor: ["Hi {name}! You trust the tape measure more than the architect."],
+    nuclear: ["Hi {name}! You swing that hammer like a F@#%N red squirrel — respect."],
+  },
+  commissioning: {
+    light: ["Hi {name}! Your functional test is where design sins surface."],
+    contractor: ["Hi {name}! Your Cx checklist is longer than the O&M manual."],
+    nuclear: ["Hi {name}! You commission systems — you decommission optimism."],
+  },
+  sustainability: {
+    light: ["Hi {name}! Your LEED score is high — your envelope isn't."],
+    contractor: ["Hi {name}! Your energy model is poetry — the meter is prose."],
+    nuclear: ["Hi {name}! You sell carbon — you deliver RFIs."],
+  },
+  estimator: {
+    light: ["Hi {name}! Your takeoff assumes the drawing is telling the truth."],
+    contractor: ["Hi {name}! Your allowance for design revisions is cute."],
+    nuclear: ["Hi {name}! Your bid is art — the buyout is tragedy."],
+  },
   default: {
     light: UNIVERSAL.light,
     contractor: UNIVERSAL.contractor,
     nuclear: UNIVERSAL.nuclear,
+    nsfw: [],
   },
 };
 
-export function getTemplatePool(roleKey: RolePoolKey, intensity: Intensity): string[] {
+const INTENSITIES: Intensity[] = ["light", "contractor", "nuclear", "nsfw"];
+
+export function getTemplatePool(
+  roleKey: RolePoolKey,
+  intensity: Intensity,
+  industryHatId?: string,
+): string[] {
   const roleLines = ROLE_POOLS[roleKey]?.[intensity] ?? [];
   const universal = UNIVERSAL[intensity] ?? [];
-  return [...new Set([...roleLines, ...universal])];
+  const extra = getBurnExtensions(roleKey, intensity, industryHatId);
+  return [...new Set([...roleLines, ...universal, ...extra])];
 }
 
 export function countTemplates(roleKey: RolePoolKey): number {
-  return (["light", "contractor", "nuclear"] as Intensity[]).reduce(
-    (sum, i) => sum + getTemplatePool(roleKey, i).length,
-    0,
-  );
+  return INTENSITIES.reduce((sum, i) => sum + getTemplatePool(roleKey, i).length, 0);
 }

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { CodiiiFace } from "../components/CodiiiFace";
 import { useBooth } from "../context/BoothContext";
 import { useCodiiiVoice } from "../hooks/useCodiiiVoice";
+import { roastForSpeech } from "../lib/profanityCensor";
 import styles from "./screens.module.css";
 
 export function RoastScreen() {
@@ -28,7 +29,7 @@ export function RoastScreen() {
       }
       const buffer = roastSpeechBuffer;
       setRoastSpeechBuffer(null);
-      const played = await speakFromBuffer(buffer, roast.roast);
+      const played = await speakFromBuffer(buffer, roastForSpeech(roast.roast));
       if (played) setShowText(true);
     };
 

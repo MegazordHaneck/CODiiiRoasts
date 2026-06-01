@@ -3,6 +3,7 @@ import { CodiiiOnFire } from "../components/CodiiiOnFire";
 import { ComplianceScanner } from "../components/ComplianceScanner";
 import { useBooth } from "../context/BoothContext";
 import { fetchSpeech } from "../lib/api";
+import { roastForSpeech } from "../lib/profanityCensor";
 import { useRoastStream } from "../hooks/useRoastStream";
 import styles from "./screens.module.css";
 
@@ -12,6 +13,7 @@ export function ScanScreen() {
   const {
     attendee,
     intensity,
+    nsfwPin,
     settings,
     setRoast,
     setRoastSpeechBuffer,
@@ -41,13 +43,15 @@ export function ScanScreen() {
       role: attendee.role,
       company: attendee.company,
       introTranscript: attendee.introTranscript,
+      industryHatId: attendee.industryHatId,
       intensity,
       safeMode: settings.safeMode,
+      nsfwPin: intensity === "nsfw" ? (nsfwPin ?? undefined) : undefined,
     });
 
     const speechPromise = roastPromise.then((result) => {
       if (!result || settings.mute) return null;
-      return fetchSpeech(result.roast);
+      return fetchSpeech(roastForSpeech(result.roast));
     });
 
     void Promise.all([
@@ -71,6 +75,7 @@ export function ScanScreen() {
   }, [
     attendee,
     intensity,
+    nsfwPin,
     settings.safeMode,
     settings.mute,
     generate,

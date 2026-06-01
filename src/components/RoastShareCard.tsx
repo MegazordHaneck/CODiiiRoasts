@@ -13,6 +13,8 @@ type Props = {
   photoUrl?: string | null;
   qrUrl?: string;
   compact?: boolean;
+  /** Booth share screen — scale up on screen (export PNG stays standard size) */
+  booth?: boolean;
 };
 
 const W = 540;
@@ -21,7 +23,7 @@ const FOOTER_H = 280;
 const H = PHOTO_H + FOOTER_H;
 
 export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function RoastShareCard(
-  { name, roast, photoUrl, qrUrl = "https://codiii.com", compact = false },
+  { name, roast, photoUrl, qrUrl = "https://codiii.com", compact = false, booth = false },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -96,7 +98,7 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
 
   useEffect(() => {
     void drawCard();
-  }, [drawCard, qrUrl]);
+  }, [drawCard]);
 
   useImperativeHandle(
     ref,
@@ -118,7 +120,7 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
     <div className={styles.wrap}>
       <canvas
         ref={canvasRef}
-        className={`${styles.canvas} ${compact ? styles.canvasCompact : ""}`}
+        className={`${styles.canvas} ${booth ? styles.canvasBooth : ""} ${compact && !booth ? styles.canvasCompact : ""}`}
         aria-label={`Roast share card for ${name}`}
       />
     </div>

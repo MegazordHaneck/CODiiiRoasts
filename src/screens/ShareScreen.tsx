@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { blobToBase64, createShareLink } from "../lib/shareLinkApi";
 import { RoastShareCard, type RoastShareCardHandle } from "../components/RoastShareCard";
-import { ShareActions } from "../components/ShareActions";
+import { ShareScanQr } from "../components/ShareScanQr";
 import { WebcamCapture } from "../components/WebcamCapture";
 import { useBooth } from "../context/BoothContext";
 import styles from "./screens.module.css";
@@ -13,7 +13,6 @@ export function ShareScreen() {
   const cardRef = useRef<RoastShareCardHandle>(null);
   const [secondsLeft, setSecondsLeft] = useState(SHARE_RESET_SECONDS);
   const [sharePageUrl, setSharePageUrl] = useState<string | null>(null);
-  const [qrHint, setQrHint] = useState<string | null>(null);
   const uploadedRef = useRef(false);
 
   useEffect(() => {
@@ -47,9 +46,7 @@ export function ShareScreen() {
       });
       if (link) {
         setSharePageUrl(link.sharePageUrl);
-        setQrHint("Scan with your phone — post from there, no PC login.");
       } else {
-        setQrHint("QR links to codiii.com — use Save below for the card.");
         setSharePageUrl("https://codiii.com");
       }
     };
@@ -59,36 +56,30 @@ export function ShareScreen() {
 
   if (!attendee || !roast) return null;
 
-  const fileName = `codiii-roast-${attendee.name.replace(/\s+/g, "-").toLowerCase()}.png`;
-
   return (
     <div className={styles.shareLayout}>
       {!webcamPhotoUrl ? (
         <>
           <h1 className={styles.shareTitle}>Share your roast</h1>
-          <p className={styles.shareHint}>Take your photo — then scan the QR on your phone.</p>
+          <p className={styles.shareHint}>Take your photo — then scan the QR on the right.</p>
           <WebcamCapture compact photoUrl={webcamPhotoUrl} onCapture={setWebcamPhotoUrl} />
         </>
       ) : (
         <div className={styles.shareReady}>
           <h1 className={styles.shareTitle}>Share your roast</h1>
-          {qrHint && <p className={styles.shareQrHint}>{qrHint}</p>}
-          <div className={styles.shareCardWrap}>
-            <RoastShareCard
-              ref={cardRef}
-              compact
-              name={attendee.name}
-              roast={roast.roast}
-              photoUrl={webcamPhotoUrl}
-              qrUrl={sharePageUrl ?? undefined}
-            />
+          <div className={styles.shareRow}>
+            <div className={styles.shareCardWrap}>
+              <RoastShareCard
+                ref={cardRef}
+                booth
+                name={attendee.name}
+                roast={roast.roast}
+                photoUrl={webcamPhotoUrl}
+                qrUrl={sharePageUrl ?? undefined}
+              />
+            </div>
+            <ShareScanQr url={sharePageUrl} />
           </div>
-          <ShareActions
-            compact
-            roast={roast.roast}
-            fileName={fileName}
-            getPngBlob={() => cardRef.current?.getPngBlob() ?? Promise.resolve(null)}
-          />
           <div className={styles.shareFooter}>
             <p className={styles.shareReset}>Auto-reset in {secondsLeft}s</p>
             <button type="button" className={styles.shareDoneBtn} onClick={resetFlow}>

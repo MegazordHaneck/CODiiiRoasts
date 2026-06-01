@@ -13,8 +13,10 @@ export function useRoastStream() {
     role: string;
     company?: string;
     introTranscript?: string;
+    industryHatId?: string;
     intensity: Intensity;
     safeMode: boolean;
+    nsfwPin?: string;
   }) => {
     setLoading(true);
     setError(null);

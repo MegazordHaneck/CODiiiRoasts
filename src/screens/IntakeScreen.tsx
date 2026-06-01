@@ -16,11 +16,11 @@ export function IntakeScreen() {
   const continueFlow = () => {
     if (manual) {
       if (!name.trim()) return;
+      const introTranscript = `My name is ${name.trim()}${company.trim() ? ` from ${company.trim()}` : ""}. I work as ${role.trim() || "an AEC professional"}.`;
+      const parsed = parseIntro(introTranscript);
       setAttendee({
-        name: name.trim(),
-        role: role.trim() || "AEC professional",
-        company: company.trim() || undefined,
-        introTranscript: `My name is ${name.trim()}${company.trim() ? ` from ${company.trim()}` : ""}. I work as ${role.trim() || "an AEC professional"}.`,
+        ...parsed,
+        introTranscript,
       });
     } else {
       const transcript = fullText.trim();

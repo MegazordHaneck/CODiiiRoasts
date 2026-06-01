@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { exportSessionsCsv } from "../lib/api";
+import { countMeanModeLines, totalBoothLines } from "../content/pool-stats";
 import { countTemplates } from "../content/roast-pools";
 import { useBooth } from "../context/BoothContext";
 import { clearRoastHistory, getUsedRoasts } from "../lib/roastHistory";
@@ -93,7 +94,13 @@ export function AdminScreen() {
         <p className={styles.subtitle}>
           Sessions: {sessions.length} · Fallbacks: {sessions.filter((s) => s.fallback).length}
           <br />
-          Roast memory: {getUsedRoasts().length} used · Offline pool: {countTemplates("default")}+ lines
+          Roast memory: {getUsedRoasts().length} used · Core templates: {countTemplates("default")}+
+          <br />
+          Creative library: ~{totalBoothLines()} lines · Mean mode: ~{countMeanModeLines("architect")}+ per role
+          <br />
+          Industry hats: 80+ roles from /public/industryContext (AECOHats)
+          <br />
+          18+ mode: staff PIN on intensity screen (set NSFW_PIN in Amplify + VITE_NSFW_PIN locally).
         </p>
         <div className={styles.actions}>
           <button type="button" className={styles.btnSecondary} onClick={exportCsv}>Export CSV</button>
