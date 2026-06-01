@@ -41,12 +41,17 @@ export const SHARE_PLATFORMS: {
   label: string;
   hint: string;
 }[] = [
-  { id: "twitter", label: "X / Twitter", hint: "Opens with your caption ready to post" },
-  { id: "linkedin", label: "LinkedIn", hint: "Opens LinkedIn with your caption" },
-  { id: "facebook", label: "Facebook", hint: "Share CODiii — paste your caption after" },
   {
     id: "instagram",
     label: "Instagram",
-    hint: "Downloads image & copies caption — paste in Stories or feed",
+    hint: "Share sheet or save — then paste in Stories or feed",
   },
+  { id: "linkedin", label: "LinkedIn", hint: "Opens LinkedIn with your caption ready" },
+  { id: "facebook", label: "Facebook", hint: "Opens Facebook — caption copied for you" },
+  { id: "twitter", label: "X / Twitter", hint: "Opens with your caption ready to post" },
 ];
+
+/** Booth phone flow — Instagram, LinkedIn, Facebook only. */
+export const PHONE_SHARE_PLATFORMS = SHARE_PLATFORMS.filter((p) =>
+  (["instagram", "linkedin", "facebook"] as SharePlatform[]).includes(p.id),
+);

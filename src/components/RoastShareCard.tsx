@@ -23,7 +23,7 @@ const FOOTER_H = 280;
 const H = PHOTO_H + FOOTER_H;
 
 export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function RoastShareCard(
-  { name, roast, photoUrl, qrUrl = "https://codiii.com", compact = false, booth = false },
+  { name, roast, photoUrl, qrUrl, compact = false, booth = false },
   ref,
 ) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -87,13 +87,15 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
     ctx.font = "12px Inter, sans-serif";
     ctx.fillText("codiii.com", 28, H - 28);
 
-    const qrCanvas = document.createElement("canvas");
-    await QRCode.toCanvas(qrCanvas, qrUrl, {
-      width: 64,
-      margin: 1,
-      color: { dark: "#e97024", light: "#00000000" },
-    });
-    ctx.drawImage(qrCanvas, W - 88, H - 88, 64, 64);
+    if (qrUrl) {
+      const qrCanvas = document.createElement("canvas");
+      await QRCode.toCanvas(qrCanvas, qrUrl, {
+        width: 64,
+        margin: 1,
+        color: { dark: "#e97024", light: "#00000000" },
+      });
+      ctx.drawImage(qrCanvas, W - 88, H - 88, 64, 64);
+    }
   }, [name, roast, photoUrl, qrUrl]);
 
   useEffect(() => {

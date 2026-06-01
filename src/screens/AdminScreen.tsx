@@ -1,5 +1,6 @@
-import { useState } from "react";
-import { exportSessionsCsv } from "../lib/api";
+import { useEffect, useState } from "react";
+import { exportSessionsCsv, resolveRoastUrl } from "../lib/api";
+import { resolveShareApiUrl } from "../lib/shareLinkApi";
 import { countMeanModeLines, totalBoothLines } from "../content/pool-stats";
 import { countTemplates } from "../content/roast-pools";
 import { useBooth } from "../context/BoothContext";
@@ -14,6 +15,13 @@ export function AdminScreen() {
   const { settings, updateSettings, sessions, killSwitch } = useBooth();
   const [pin, setPin] = useState("");
   const [authed, setAuthed] = useState(false);
+  const [roastApiOn, setRoastApiOn] = useState<boolean | null>(null);
+  const [shareApiOn, setShareApiOn] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    void resolveRoastUrl().then((url) => setRoastApiOn(!!url));
+    void resolveShareApiUrl().then((url) => setShareApiOn(!!url));
+  }, []);
 
   if (!authed) {
     return (
@@ -92,8 +100,10 @@ export function AdminScreen() {
           </select>
         </div>
         <p className={styles.subtitle}>
-          Sessions: {sessions.length} · Fallbacks: {sessions.filter((s) => s.fallback).length}
+          Sessions: {sessions.length} · Fallback roasts: {sessions.filter((s) => s.fallback).length}
           <br />
+          Services: roast {roastApiOn === null ? "…" : roastApiOn ? "ok" : "missing"} · share{" "}
+          {shareApiOn === null ? "…" : shareApiOn ? "ok" : "missing"}
           Roast memory: {getUsedRoasts().length} used · Core templates: {countTemplates("default")}+
           <br />
           Creative library: ~{totalBoothLines()} lines · Mean mode: ~{countMeanModeLines("architect")}+ per role

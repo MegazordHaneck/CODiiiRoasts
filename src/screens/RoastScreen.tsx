@@ -47,7 +47,15 @@ export function RoastScreen() {
         speaking={isSpeaking}
         animate
       />
-      <p className={styles.roastLead}>CODiii says:</p>
+      <p className={styles.roastLead}>
+        CODiii says:
+        {roast.fallback ? (
+          <span className={styles.roastOfflineTag} title="Roast API URL missing or request failed — using local library">
+            {" "}
+            (offline roast)
+          </span>
+        ) : null}
+      </p>
       <p
         className={`${styles.roastText} ${showText ? styles.roastTextVisible : styles.roastTextHidden}`}
         aria-live="polite"

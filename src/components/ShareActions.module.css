@@ -82,6 +82,51 @@
   border-color: rgba(24, 119, 242, 0.35);
 }
 
+.sharePrimary {
+  width: 100%;
+  padding: 1rem;
+  border: none;
+  border-radius: var(--radius);
+  background: linear-gradient(90deg, var(--brand-primary-dark), var(--brand-primary));
+  color: #fff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+
+.sharePrimary:hover {
+  filter: brightness(1.06);
+}
+
+.wrapPhone {
+  max-width: 100%;
+  gap: 0.85rem;
+}
+
+.wrapPhone .heading {
+  font-size: 1rem;
+  color: var(--brand-primary);
+}
+
+.platformsPhone {
+  grid-template-columns: 1fr;
+  gap: 0.55rem;
+}
+
+.platformBtnPhone {
+  padding: 1rem 1.1rem;
+  font-size: 1rem;
+  text-align: center;
+}
+
+.captionPhone {
+  margin-top: 0.25rem;
+}
+
+.captionPhone .captionText {
+  font-size: 0.85rem;
+}
+
 .secondary {
   display: flex;
   flex-wrap: wrap;

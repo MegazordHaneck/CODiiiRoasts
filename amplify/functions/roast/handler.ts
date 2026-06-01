@@ -51,8 +51,8 @@ async function callOpenAI(body: RoastRequest): Promise<RoastResponse> {
 
 Name: ${body.name}
 ${body.company ? `Company: ${body.company}` : ""}
-What they do (use this — do NOT shorten to one word): ${body.role}
-${body.introTranscript ? `\nExact words they said to CODiii:\n"${body.introTranscript}"\n\nYou MUST reference their real work (e.g. bridges, BIM, GC, etc.) and company if stated. Never call them a vague label like "design" alone.` : ""}
+Profession / discipline (use as a real job title — never "a designs X"): ${body.role}
+${body.introTranscript ? `\nExact words they said to CODiii:\n"${body.introTranscript}"\n\nYou MUST roast their actual work ontology (skyscrapers, bridges, BIM, GC, etc.) and company if stated. Use profession nouns (architect, superintendent) — never verb phrases like "designs skyscrapers" as their job title.` : ""}
 ${body.industryContext ? `\n${body.industryContext}\nUse their trade/discipline jargon naturally — spot elevation, invert, RFIs, submittals, etc.` : ""}
 Intensity: ${body.intensity}
 Creative angle for THIS roast only: ${angle}

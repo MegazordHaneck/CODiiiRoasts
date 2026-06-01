@@ -2,9 +2,11 @@ import { useCallback, useState } from "react";
 import {
   buildShareCaption,
   getShareUrl,
+  PHONE_SHARE_PLATFORMS,
   SHARE_PLATFORMS,
   type SharePlatform,
 } from "../lib/shareCaption";
+import { isMobileDevice } from "../lib/isMobile";
 import styles from "./ShareActions.module.css";
 
 type Props = {
@@ -12,31 +14,35 @@ type Props = {
   getPngBlob: () => Promise<Blob | null>;
   fileName: string;
   compact?: boolean;
+  /** Phone landing page after camera QR scan */
+  phone?: boolean;
 };
 
-export function ShareActions({ roast, getPngBlob, fileName, compact = false }: Props) {
+export function ShareActions({ roast, getPngBlob, fileName, compact = false, phone = false }: Props) {
   const caption = buildShareCaption(roast);
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
-  const [showCaption, setShowCaption] = useState(false);
+  const [showCaption, setShowCaption] = useState(phone);
+  const platforms = phone ? PHONE_SHARE_PLATFORMS : SHARE_PLATFORMS;
+  const mobile = phone || isMobileDevice();
 
   const copyCaption = useCallback(async () => {
     try {
       await navigator.clipboard.writeText(caption);
       setCopied(true);
-      setStatus("Caption copied!");
+      setStatus("Caption copied — paste when you post.");
       window.setTimeout(() => {
         setCopied(false);
         setStatus(null);
-      }, 2500);
+      }, 3000);
     } catch {
-      setStatus("Copy failed — use “Show caption”.");
+      setStatus("Tap and hold the caption below to copy.");
     }
   }, [caption]);
 
   const downloadImage = useCallback(async () => {
     const blob = await getPngBlob();
-    if (!blob) return;
+    if (!blob) return null;
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.download = fileName;
@@ -48,7 +54,7 @@ export function ShareActions({ roast, getPngBlob, fileName, compact = false }: P
 
   const shareNative = useCallback(async () => {
     const blob = await getPngBlob();
-    if (!blob) return;
+    if (!blob) return false;
     const file = new File([blob], fileName, { type: "image/png" });
     if (navigator.share && navigator.canShare?.({ files: [file] })) {
       try {
@@ -57,65 +63,99 @@ export function ShareActions({ roast, getPngBlob, fileName, compact = false }: P
           text: caption,
           files: [file],
         });
-        return;
+        return true;
       } catch {
-        /* cancelled */
+        /* cancelled or unsupported */
       }
     }
+    return false;
+  }, [caption, getPngBlob, fileName]);
+
+  const shareNativeOrSave = useCallback(async () => {
+    const shared = await shareNative();
+    if (shared) return;
     await downloadImage();
     await copyCaption();
-    setStatus("Saved — paste in your app.");
-  }, [caption, downloadImage, copyCaption, getPngBlob, fileName]);
+    setStatus("Card saved — caption copied. Open Instagram, LinkedIn, or Facebook to post.");
+  }, [shareNative, downloadImage, copyCaption]);
 
   const openPlatform = useCallback(
     async (platform: SharePlatform) => {
       setStatus(null);
 
       if (platform === "instagram") {
-        await downloadImage();
-        await copyCaption();
-        setStatus("Saved for Instagram");
+        const shared = await shareNative();
+        if (!shared) {
+          await downloadImage();
+          await copyCaption();
+        }
+        setStatus(
+          shared
+            ? "Pick Instagram in the share menu."
+            : "Card saved + caption copied — open Instagram to post.",
+        );
         return;
       }
+
+      const shared = await shareNative();
+      if (shared) {
+        setStatus("Pick your app in the share menu.");
+        return;
+      }
+
+      await copyCaption();
 
       const url = getShareUrl(platform, caption);
       if (!url) return;
 
-      if (platform === "facebook") await copyCaption();
-
-      window.open(url, "_blank", "noopener,noreferrer,width=600,height=700");
+      if (mobile) {
+        window.location.href = url;
+      } else {
+        window.open(url, "_blank", "noopener,noreferrer,width=600,height=700");
+      }
     },
-    [caption, downloadImage, copyCaption],
+    [caption, copyCaption, downloadImage, mobile, shareNative],
   );
 
   return (
-    <div className={`${styles.wrap} ${compact ? styles.wrapCompact : ""}`}>
-      <p className={styles.heading}>Post to</p>
-      <div className={`${styles.platforms} ${compact ? styles.platformsCompact : ""}`}>
-        {SHARE_PLATFORMS.map((p) => (
+    <div className={`${styles.wrap} ${compact ? styles.wrapCompact : ""} ${phone ? styles.wrapPhone : ""}`}>
+      <p className={styles.heading}>{phone ? "Share to your socials" : "Post to"}</p>
+
+      <div
+        className={`${styles.platforms} ${compact ? styles.platformsCompact : ""} ${phone ? styles.platformsPhone : ""}`}
+      >
+        {platforms.map((p) => (
           <button
             key={p.id}
             type="button"
-            className={`${styles.platformBtn} ${styles[p.id]}`}
+            className={`${styles.platformBtn} ${styles[p.id]} ${phone ? styles.platformBtnPhone : ""}`}
             onClick={() => void openPlatform(p.id)}
             title={p.hint}
           >
-            {compact ? p.label.split(" / ")[0] : p.label}
+            {phone ? p.label : compact ? p.label.split(" / ")[0] : p.label}
           </button>
         ))}
       </div>
 
-      <div className={`${styles.secondary} ${compact ? styles.secondaryCompact : ""}`}>
-        <button type="button" className={styles.ghostBtn} onClick={() => void shareNative()}>
-          Share
+      {!compact && (
+        <button type="button" className={styles.sharePrimary} onClick={() => void shareNativeOrSave()}>
+          {phone ? "Share card + caption" : "Share to socials"}
         </button>
+      )}
+
+      <div className={`${styles.secondary} ${compact ? styles.secondaryCompact : ""}`}>
+        {compact && (
+          <button type="button" className={styles.ghostBtn} onClick={() => void shareNativeOrSave()}>
+            Share
+          </button>
+        )}
         <button type="button" className={styles.ghostBtn} onClick={() => void downloadImage()}>
-          Save
+          Save image
         </button>
         <button type="button" className={styles.ghostBtn} onClick={() => void copyCaption()}>
-          {copied ? "Copied" : "Caption"}
+          {copied ? "Copied!" : "Copy caption"}
         </button>
-        {compact && (
+        {compact && !phone && (
           <button
             type="button"
             className={styles.ghostBtn}
@@ -127,8 +167,10 @@ export function ShareActions({ roast, getPngBlob, fileName, compact = false }: P
       </div>
 
       {(!compact || showCaption) && (
-        <div className={`${styles.captionPreview} ${compact ? styles.captionCompact : ""}`}>
-          {!compact && <span className={styles.captionLabel}>Your post text</span>}
+        <div className={`${styles.captionPreview} ${compact ? styles.captionCompact : ""} ${phone ? styles.captionPhone : ""}`}>
+          <span className={styles.captionLabel}>
+            {phone ? "Your post text (copied when you tap a network above)" : "Your post text"}
+          </span>
           <pre className={styles.captionText}>{caption}</pre>
         </div>
       )}

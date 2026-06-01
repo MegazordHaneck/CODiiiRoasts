@@ -87,8 +87,9 @@ export function buildSystemPrompt(intensity: Intensity, safeMode: boolean): stri
     contractor:
       "Edgier field + office stereotypes: RFIs as lifestyle, 'see structural,' submittal equals, GC float lies, superintendent vs design team, issued-for-construction dare. Specific trope + their intro.",
     nuclear: `NUCLEAR: Savage AEC industry stereotype roast — conference-safe but brutal.
+Use 2-4 sentences with escalating beats (document → meeting → field punchline). Not a single one-liner.
 Use recognizable tropes: architect never on site / floating stair, engineer stamp-and-run, BIM LOD lies, owner budget delusion, GC blame matrix, specifier door saga, contractor vs drawing set.
-Be specific to what they said. NO meta CODiii/coffee/workflow filler. NO tame generic burns.`,
+Be specific to what they said (company, building type, discipline). NO meta CODiii/coffee/workflow filler. NO tame generic burns.`,
     nsfw: `18+ MEAN / VULGAR MODE (NOT sexual — workplace language only): Write like a savage AEC insider at 11pm.
 Use 3–4 sentences (up to ~550 characters). Escalating beats: specific document/meeting/detail → darker metaphor → punchline.
 Profanity when it lands — but NEVER spell swear words fully: censor for sharing (fuck→F@#%, fucking→F@#%NG, shit→SH!T, bitch→B#@$H, asshole→@$$H0LE). Example: "swing your hammer like a F@#%N red squirrel" or "#AI'sB#@$H".

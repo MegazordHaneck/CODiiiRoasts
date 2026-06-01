@@ -36,7 +36,21 @@
 .hint {
   margin: 0;
   text-align: center;
-  font-size: 0.9rem;
+  font-size: 0.85rem;
+  line-height: 1.45;
+  color: var(--text-muted);
+}
+
+.hint strong {
+  color: var(--brand-primary);
+}
+
+.badge {
+  margin: 0;
+  text-align: center;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   color: var(--text-muted);
 }
 

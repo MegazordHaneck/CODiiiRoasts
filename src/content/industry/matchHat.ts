@@ -24,7 +24,16 @@ function scoreHat(text: string, hat: IndustryHat): number {
 
   // Common spoken aliases
   const aliases: Record<string, string[]> = {
-    architect: ["architect", "architecture"],
+    architect: [
+      "architect",
+      "architecture",
+      "skyscraper",
+      "skyscrapers",
+      "high-rise",
+      "high rise",
+      "tower",
+      "designs skyscrapers",
+    ],
     structural_engineer: ["structural engineer", "structural", "bridge designer", "designs bridges", "bridges"],
     civil_engineer: ["civil engineer", "civil", "highway", "roadway"],
     mechanical_engineer: ["mechanical engineer", "mechanical design"],

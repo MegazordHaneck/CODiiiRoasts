@@ -3,8 +3,13 @@
 interface ImportMetaEnv {
   readonly VITE_ROAST_URL?: string;
   readonly VITE_SPEAK_URL?: string;
+  readonly VITE_SHARE_API_URL?: string;
   readonly VITE_ADMIN_PIN?: string;
 }
+
+declare const __CODIII_ROAST_URL__: string;
+declare const __CODIII_SPEAK_URL__: string;
+declare const __CODIII_SHARE_URL__: string;
 
 interface ImportMeta {
   readonly env: ImportMetaEnv;
