@@ -51,3 +51,56 @@ VITE_ADMIN_PIN=1234
 ## 5. Booth day
 
 Open your Amplify URL in Chrome → F11 fullscreen. No install on booth PCs.
+
+## Troubleshooting
+
+### `BootstrapDetectionError` / `ssm:GetParameter` on `cdk-bootstrap`
+
+The backend phase (`npx ampx pipeline-deploy`) needs CDK bootstrapped in your **Amplify region** (yours: `ca-central-1`) and the Amplify CodeBuild role must be allowed to read bootstrap metadata.
+
+**Step 1 — Bootstrap CDK (one-time, run as account admin)**
+
+From a machine with AWS CLI configured for account `824930503114`:
+
+```bash
+npx cdk bootstrap aws://824930503114/ca-central-1
+```
+
+Or bootstrap via Amplify sandbox (also creates backend resources locally):
+
+```bash
+npm install
+npx ampx sandbox secret set OPENAI_API_KEY
+npx ampx sandbox
+```
+
+**Step 2 — Allow CodeBuild to read CDK bootstrap version**
+
+In **IAM** → find role `AemiliaControlPlaneLambda-CodeBuildRole-*` (from the build log) → **Add permissions** → **Create inline policy**:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": "ssm:GetParameter",
+      "Resource": "arn:aws:ssm:ca-central-1:824930503114:parameter/cdk-bootstrap/*"
+    }
+  ]
+}
+```
+
+Also check **Amplify Console** → **App settings** → **IAM roles** → ensure the **Build** service role has permissions for Amplify Gen 2 backend deploy (or attach `AdministratorAccess-Amplify` / Amplify backend deploy policies if your org allows).
+
+**Step 3 — Redeploy**
+
+Amplify Console → **Redeploy this version** on `main`, or push an empty commit.
+
+### `npm ci` lock file out of sync
+
+Run `npm install` locally, commit `package-lock.json`, push.
+
+### Build succeeds but roasts use fallback text
+
+Set `OPENAI_API_KEY` in Amplify **Secrets** (Gen 2), redeploy, and confirm `amplify_outputs.json` contains `custom.roastUrl` and `custom.speakUrl` after the backend phase.
