@@ -61,3 +61,12 @@ export function roleForPrompt(parts: {
   }
   return line;
 }
+
+/** Strip parser artifacts like trailing "from". */
+export function cleanAttendeeName(name: string): string {
+  return name
+    .trim()
+    .replace(/\s+from$/i, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}

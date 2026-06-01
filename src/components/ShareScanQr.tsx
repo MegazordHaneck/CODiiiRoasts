@@ -39,9 +39,10 @@ export function ShareScanQr({ url, loading, error, onRetry }: Props) {
           </div>
         </div>
       )}
-      <p className={styles.title}>Phone camera here</p>
+      <p className={styles.title}>Scan with your phone camera</p>
       <p className={styles.sub}>
-        No app needed — iPhone &amp; Android Camera will open your roast card on this phone.
+        Point your phone at this QR on the laptop screen. Your phone opens a page with the card image — save it and
+        post to Instagram, LinkedIn, or Facebook. You are not running the booth on your phone.
       </p>
       {error && (
         <div className={styles.errorBlock}>

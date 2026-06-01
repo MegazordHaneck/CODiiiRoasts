@@ -12,6 +12,7 @@ import {
   generateCombinatorialRoast,
   isRoastRepetitive,
 } from "./roastVariety";
+import { normalizeRoastDelivery, type RoastDeliveryContext } from "./roastDelivery";
 import { resolveRoastUrl, resolveSpeakUrl } from "./amplifyOutputs";
 
 export { resolveRoastUrl, resolveSpeakUrl } from "./amplifyOutputs";
@@ -49,21 +50,12 @@ export function getFallbackRoast(
     candidates.push(...getIndustryHatBurns(hatId, intensity, who, seed));
   }
 
-  if (intensity === "nsfw" || intensity === "nuclear") {
-    candidates.push(pickMeanModeRoast(who, key, seed));
+  if (intensity === "nsfw") {
+    candidates.unshift(pickMeanModeRoast(who, key, seed));
   }
 
   const pool = getTemplatePool(key, intensity, hatId).map((t) => t.replace(/\{name\}/g, who));
   candidates.push(...pool);
-
-  if (parsed?.company && introTranscript?.trim()) {
-    const co = parsed.company;
-    if (intensity === "nuclear" || intensity === "nsfw") {
-      candidates.unshift(
-        `${who}, ${roleLabel} at ${co} — your sheet index is a novel and the tower is a footnote. The coordination call is just people asking what the F@#% that detail is. And the contractor? Building the previous revision like it's tradition.`,
-      );
-    }
-  }
 
   const picked = pickFromCandidates(candidates, used, attempt);
   if (picked && !isRoastRepetitive(picked, used)) {
@@ -89,8 +81,29 @@ export function getFallbackRoast(
   };
 }
 
-function finalizeRoast(data: RoastResult): RoastResult {
-  const roast = censorProfanityForShare(data.roast);
+function deliveryContext(input: {
+  name: string;
+  role: string;
+  company?: string;
+  introTranscript?: string;
+  intensity: Intensity;
+}): RoastDeliveryContext {
+  const parsed = input.introTranscript?.trim() ? parseIntro(input.introTranscript) : null;
+  return {
+    name: parsed?.name ?? input.name,
+    role: parsed?.role ?? input.role,
+    company: parsed?.company ?? input.company,
+    introTranscript: input.introTranscript,
+    intensity: input.intensity,
+  };
+}
+
+function finalizeRoast(
+  data: RoastResult,
+  ctx: RoastDeliveryContext,
+): RoastResult {
+  let roast = normalizeRoastDelivery(data.roast, ctx);
+  roast = censorProfanityForShare(roast);
   const violations = violationsForRoast(roast, data.violations);
   return { ...data, roast, violations };
 }
@@ -161,6 +174,7 @@ export async function fetchRoast(input: {
 }): Promise<RoastResult> {
   const url = await resolveRoastUrl();
   const excludeRoasts = getUsedRoasts().slice(-150);
+  const delivery = deliveryContext(input);
 
   const pickUnique = async (): Promise<RoastResult> => {
     if (!url) {
@@ -173,6 +187,7 @@ export async function fetchRoast(input: {
           0,
           input.industryHatId,
         ),
+        delivery,
       );
     }
 
@@ -184,6 +199,7 @@ export async function fetchRoast(input: {
           excludeRoasts: [...excludeRoasts, ...tried],
           variationHint: CREATIVE_ANGLES[(attempt + input.name.length) % CREATIVE_ANGLES.length],
         }),
+        delivery,
       );
       if (!isRoastRepetitive(data.roast, [...excludeRoasts, ...tried])) {
         return data;
@@ -200,6 +216,7 @@ export async function fetchRoast(input: {
         tried.length,
         input.industryHatId,
       ),
+      delivery,
     );
   };
 
@@ -217,6 +234,7 @@ export async function fetchRoast(input: {
         0,
         input.industryHatId,
       ),
+      delivery,
     );
     markRoastUsed(data.roast);
     return data;

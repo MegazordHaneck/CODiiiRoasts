@@ -41,7 +41,8 @@ export function IntakeScreen() {
       <CodiiiFace size={260} animate listening={listening} />
       <h1 className={styles.title}>Introduce yourself to CODiii</h1>
       <p className={styles.subtitle}>
-        Say: &ldquo;Hey CODiii, my name is ___, from ___ — and this is what I do.&rdquo;
+        Say: &ldquo;Hey CODiii, my name is ___, from ___ — and this is what I do.&rdquo; Next screen: pick heat
+        (including 18+ Mean mode with staff PIN).
       </p>
 
       {!manual ? (

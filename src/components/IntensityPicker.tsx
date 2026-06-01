@@ -95,9 +95,7 @@ export function IntensityPicker({ value, onChange, safeMode, onNsfwUnlock }: Pro
             </button>
           );
         })}
-      </div>
 
-      <div className={styles.nsfwBlock}>
         <button
           type="button"
           disabled={nsfwDisabled}
@@ -110,23 +108,25 @@ export function IntensityPicker({ value, onChange, safeMode, onNsfwUnlock }: Pro
               {!nsfwUnlocked && !nsfwDisabled && (
                 <span className={styles.lockTag} aria-hidden>
                   {" "}
-                  🔒
+                  🔒 Staff PIN
                 </span>
               )}
             </span>
             <span className={styles.desc}>
               {nsfwDisabled
-                ? "Turn off safe mode in admin to enable staff-only mean roasts."
+                ? "Turn off safe mode in /admin to enable."
                 : nsfwUnlocked
                   ? nsfw.desc
-                  : "Disclaimer + staff PIN — adults not easily offended"}
+                  : "Tap to unlock — disclaimer + staff PIN required"}
             </span>
             {nsfwSelected && <span className={styles.badge}>Selected</span>}
             {nsfwDisabled && <span className={styles.badgeMuted}>Disabled</span>}
           </div>
           <CodiiiOnFire intensity="nsfw" size={112} active={nsfwSelected} />
         </button>
+      </div>
 
+      <div className={styles.nsfwBlock}>
         {nsfwSelected && nsfwUnlocked && (
           <p className={styles.disclaimerActive} role="status">
             Mean mode active — harsh humor enabled for this guest.

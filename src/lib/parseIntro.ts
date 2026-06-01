@@ -1,6 +1,6 @@
 import { matchIndustryHat } from "../content/industry/matchHat";
 import { rolePoolKeyForHat, rolePoolKeyFromText } from "../content/industry/rolePoolMap";
-import { isVerbPhraseRole, professionFromDesignWork, roleForPrompt, workDetailFromVerb } from "./rolePhrase";
+import { isVerbPhraseRole, professionFromDesignWork, roleForPrompt, workDetailFromVerb, cleanAttendeeName } from "./rolePhrase";
 
 /** Extract structured fields from spoken intro (best-effort). */
 export function parseIntro(transcript: string): {
@@ -23,10 +23,10 @@ export function parseIntro(transcript: string): {
 
   const nameMatch =
     text.match(
-      /(?:my name is|i'm|i am|call me|name's)\s+([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+){0,2})/i,
+      /(?:my name is|i'm|i am|call me|name's)\s+([A-Za-z][A-Za-z'-]+(?:\s+[A-Za-z][A-Za-z'-]+)*?)(?=\s+from\b|\s*,\s*and\s+|\s+and\s+i\s|\s+i\s+(?:design|build|manage|engineer|work|am)\b|$)/i,
     ) ?? text.match(/(?:hey codiii,?|hi codiii,?|hello)\s*(?:my name is)?\s*([A-Za-z][A-Za-z'-]+)/i);
   if (nameMatch) {
-    name = nameMatch[1].trim();
+    name = cleanAttendeeName(nameMatch[1].trim());
   }
 
   const companyMatch =

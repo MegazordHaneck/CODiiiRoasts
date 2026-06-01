@@ -19,7 +19,8 @@ export function IntensityScreen() {
         How hot do you want it, <span className={styles.titleAccent}>roastee</span>?
       </h1>
       <p className={styles.subtitle}>
-        Pick your heat. CODiii gets more unhinged as the flames rise.{" "}
+        Pick your heat — scroll for <strong>18+ Mean mode</strong> (staff PIN). CODiii gets more unhinged as the
+        flames rise.
         {intensity === "nsfw" && (
           <span className={styles.nsfwReminder}>
             Mean mode — vulgar, vivid AEC humor; profanity likely.
