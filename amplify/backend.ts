@@ -9,7 +9,7 @@ const roastUrl = backend.roast.resources.lambda.addFunctionUrl({
   authType: FunctionUrlAuthType.NONE,
   cors: {
     allowedOrigins: ["*"],
-    allowedMethods: [HttpMethod.POST, HttpMethod.OPTIONS],
+    allowedMethods: [HttpMethod.POST],
     allowedHeaders: ["*"],
   },
 });
@@ -18,7 +18,7 @@ const speakUrl = backend.speak.resources.lambda.addFunctionUrl({
   authType: FunctionUrlAuthType.NONE,
   cors: {
     allowedOrigins: ["*"],
-    allowedMethods: [HttpMethod.POST, HttpMethod.OPTIONS],
+    allowedMethods: [HttpMethod.POST],
     allowedHeaders: ["*"],
   },
 });
