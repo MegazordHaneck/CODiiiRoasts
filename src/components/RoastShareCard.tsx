@@ -1,6 +1,11 @@
-import { useEffect, useRef } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef } from "react";
 import QRCode from "qrcode";
+import { SHARE_HASHTAGS } from "../lib/shareCaption";
 import styles from "./RoastShareCard.module.css";
+
+export type RoastShareCardHandle = {
+  getPngBlob: () => Promise<Blob | null>;
+};
 
 type Props = {
   name: string;
@@ -9,83 +14,111 @@ type Props = {
   qrUrl?: string;
 };
 
-export function RoastShareCard({ name, roast, photoUrl, qrUrl = "https://codiii.com" }: Props) {
+const W = 540;
+const PHOTO_H = 340;
+const FOOTER_H = 280;
+const H = PHOTO_H + FOOTER_H;
+
+export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function RoastShareCard(
+  { name, roast, photoUrl, qrUrl = "https://codiii.com" },
+  ref,
+) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  useEffect(() => {
+  const drawCard = useCallback(async () => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const draw = async () => {
-      const ctx = canvas.getContext("2d");
-      if (!ctx) return;
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
 
-      const w = 540;
-      const h = 360;
-      canvas.width = w;
-      canvas.height = h;
+    canvas.width = W;
+    canvas.height = H;
 
-      if (photoUrl) {
-        const img = await loadImage(photoUrl);
-        drawCover(ctx, img, w, h);
-        ctx.fillStyle = "rgba(0, 0, 0, 0.55)";
-        ctx.fillRect(0, 0, w, h);
-      } else {
-        ctx.fillStyle = "#0a0a0a";
-        ctx.fillRect(0, 0, w, h);
-      }
+    if (photoUrl) {
+      const img = await loadImage(photoUrl);
+      drawCover(ctx, img, 0, 0, W, PHOTO_H);
+    } else {
+      ctx.fillStyle = "#1a1a1a";
+      ctx.fillRect(0, 0, W, PHOTO_H);
+      ctx.fillStyle = "#666";
+      ctx.font = "16px Inter, sans-serif";
+      ctx.textAlign = "center";
+      ctx.fillText("Roastee photo", W / 2, PHOTO_H / 2);
+      ctx.textAlign = "left";
+    }
 
-      drawRoastedBadge(ctx);
+    const photoGrad = ctx.createLinearGradient(0, PHOTO_H - 80, 0, PHOTO_H);
+    photoGrad.addColorStop(0, "rgba(0,0,0,0)");
+    photoGrad.addColorStop(1, "rgba(0,0,0,0.75)");
+    ctx.fillStyle = photoGrad;
+    ctx.fillRect(0, PHOTO_H - 80, W, 80);
 
-      ctx.strokeStyle = "#e97024";
-      ctx.lineWidth = 2;
-      ctx.strokeRect(14, 14, w - 28, h - 28);
+    drawRoastedBadge(ctx);
 
-      ctx.fillStyle = "#fff";
-      ctx.font = "bold 20px Inter, sans-serif";
-      ctx.fillText(name, 28, h - 118);
+    ctx.fillStyle = "#0a0a0a";
+    ctx.fillRect(0, PHOTO_H, W, FOOTER_H);
 
-      ctx.fillStyle = "#f3f4f6";
-      ctx.font = "15px Inter, sans-serif";
-      wrapText(ctx, roast, 28, h - 92, w - 56, 20);
+    ctx.strokeStyle = "#e97024";
+    ctx.lineWidth = 2;
+    ctx.strokeRect(12, 12, W - 24, H - 24);
 
-      ctx.fillStyle = "#e97024";
-      ctx.font = "bold 13px Inter, sans-serif";
-      ctx.fillText("CODiii Roasts", 28, h - 28);
+    ctx.fillStyle = "#e97024";
+    ctx.font = "bold 22px Inter, sans-serif";
+    ctx.fillText("I just got Roasted by CODiii", 28, PHOTO_H + 44);
 
-      const qrCanvas = document.createElement("canvas");
-      await QRCode.toCanvas(qrCanvas, qrUrl, {
-        width: 72,
-        margin: 1,
-        color: { dark: "#e97024", light: "#00000000" },
-      });
-      ctx.drawImage(qrCanvas, w - 96, h - 96, 72, 72);
-    };
+    ctx.fillStyle = "#9ca3af";
+    ctx.font = "13px Inter, sans-serif";
+    ctx.fillText(name, 28, PHOTO_H + 68);
 
-    void draw();
+    ctx.fillStyle = "#f3f4f6";
+    ctx.font = "italic 16px Inter, sans-serif";
+    const quoted = roast.trim().startsWith('"') ? roast.trim() : `"${roast.trim()}"`;
+    wrapText(ctx, quoted, 28, PHOTO_H + 96, W - 56, 22);
+
+    ctx.fillStyle = "#e97024";
+    ctx.font = "600 13px Inter, sans-serif";
+    ctx.fillText(SHARE_HASHTAGS, 28, H - 52);
+
+    ctx.fillStyle = "#6b7280";
+    ctx.font = "12px Inter, sans-serif";
+    ctx.fillText("codiii.com", 28, H - 28);
+
+    const qrCanvas = document.createElement("canvas");
+    await QRCode.toCanvas(qrCanvas, qrUrl, {
+      width: 64,
+      margin: 1,
+      color: { dark: "#e97024", light: "#00000000" },
+    });
+    ctx.drawImage(qrCanvas, W - 88, H - 88, 64, 64);
   }, [name, roast, photoUrl, qrUrl]);
+
+  useEffect(() => {
+    void drawCard();
+  }, [drawCard]);
+
+  useImperativeHandle(
+    ref,
+    () => ({
+      getPngBlob: () =>
+        new Promise((resolve) => {
+          const canvas = canvasRef.current;
+          if (!canvas) {
+            resolve(null);
+            return;
+          }
+          canvas.toBlob((blob) => resolve(blob), "image/png");
+        }),
+    }),
+    [],
+  );
 
   return (
     <div className={styles.wrap}>
       <canvas ref={canvasRef} className={styles.canvas} aria-label={`Roast share card for ${name}`} />
-      <a
-        className={styles.download}
-        href="#"
-        onClick={(e) => {
-          e.preventDefault();
-          const canvas = canvasRef.current;
-          if (!canvas) return;
-          const link = document.createElement("a");
-          link.download = `codiii-roast-${name.replace(/\s+/g, "-").toLowerCase()}.png`;
-          link.href = canvas.toDataURL("image/png");
-          link.click();
-        }}
-      >
-        Download image
-      </a>
     </div>
   );
-}
+});
 
 function drawRoastedBadge(ctx: CanvasRenderingContext2D) {
   const x = 20;
@@ -113,14 +146,16 @@ function loadImage(src: string): Promise<HTMLImageElement> {
 function drawCover(
   ctx: CanvasRenderingContext2D,
   img: HTMLImageElement,
+  x: number,
+  y: number,
   w: number,
   h: number,
 ) {
   const scale = Math.max(w / img.width, h / img.height);
   const sw = img.width * scale;
   const sh = img.height * scale;
-  const sx = (w - sw) / 2;
-  const sy = (h - sh) / 2;
+  const sx = x + (w - sw) / 2;
+  const sy = y + (h - sh) / 2;
   ctx.drawImage(img, sx, sy, sw, sh);
 }
 
@@ -135,12 +170,20 @@ function wrapText(
   const words = text.split(" ");
   let line = "";
   let cy = y;
+  const maxLines = 5;
+  let lines = 0;
+
   for (const word of words) {
     const test = `${line}${word} `;
     if (ctx.measureText(test).width > maxWidth && line) {
       ctx.fillText(line.trim(), x, cy);
       line = `${word} `;
       cy += lineHeight;
+      lines += 1;
+      if (lines >= maxLines) {
+        ctx.fillText(`${line.trim()}…`, x, cy);
+        return;
+      }
     } else {
       line = test;
     }
