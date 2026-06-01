@@ -1,30 +1,37 @@
 .wrapper {
   position: relative;
   display: inline-block;
+  filter: drop-shadow(0 12px 32px rgba(233, 112, 36, 0.35));
 }
 
-.base {
+.svg {
   width: 100%;
   height: 100%;
-  object-fit: contain;
-  mix-blend-mode: multiply;
-  filter: drop-shadow(0 8px 24px rgba(0, 0, 0, 0.4));
+  display: block;
 }
 
-.overlay {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+.head {
+  transform-origin: 100px 110px;
 }
 
-.idle {
+.idle .head {
   animation: bob 3s ease-in-out infinite;
 }
 
-.speaking {
-  animation: bob 0.35s ease-in-out infinite;
+.speaking .head {
+  animation: talkBob 0.28s ease-in-out infinite;
+}
+
+.listening .head {
+  animation: listenPulse 1.2s ease-in-out infinite;
+}
+
+.antennae {
+  transform-origin: 100px 40px;
+}
+
+.speaking .antennae {
+  animation: wiggle 0.35s ease-in-out infinite;
 }
 
 @keyframes bob {
@@ -33,6 +40,48 @@
     transform: translateY(0);
   }
   50% {
-    transform: translateY(-4px);
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes talkBob {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-3px) scale(1.02);
+  }
+}
+
+@keyframes listenPulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-2deg);
+  }
+  75% {
+    transform: rotate(2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .idle .head,
+  .speaking .head,
+  .listening .head,
+  .speaking .antennae {
+    animation: none;
   }
 }

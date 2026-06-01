@@ -6,9 +6,16 @@ type Props = {
   progress: number;
   label?: string;
   glitch?: boolean;
+  /** Roast prep mode — no compliance wording */
+  roastMode?: boolean;
 };
 
-export function ComplianceScanner({ progress, label, glitch = false }: Props) {
+export function ComplianceScanner({
+  progress,
+  label,
+  glitch = false,
+  roastMode = false,
+}: Props) {
   const [phaseIndex, setPhaseIndex] = useState(0);
   const phases = scanPhases as string[];
 
@@ -22,14 +29,34 @@ export function ComplianceScanner({ progress, label, glitch = false }: Props) {
   const displayLabel = label ?? phases[phaseIndex];
 
   return (
-    <div className={`${styles.panel} ${glitch ? styles.glitch : ""}`}>
+    <div className={`${styles.panel} ${glitch ? styles.glitch : ""} ${roastMode ? styles.roastPanel : ""}`}>
       <p className={styles.label}>
-        <strong>Compliance Scan</strong> — {displayLabel}
+        {roastMode ? (
+          <>
+            <span className={styles.roastEmoji} aria-hidden>
+              🔥
+            </span>{" "}
+            {displayLabel}
+          </>
+        ) : (
+          <>
+            <strong>Compliance Scan</strong> — {displayLabel}
+          </>
+        )}
       </p>
-      <div className={styles.track} role="progressbar" aria-valuenow={Math.round(progress)} aria-valuemin={0} aria-valuemax={100}>
+      <div
+        className={styles.track}
+        role="progressbar"
+        aria-valuenow={Math.round(progress)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label={displayLabel}
+      >
         <div className={styles.fill} style={{ width: `${Math.min(100, progress)}%` }} />
       </div>
-      <span className={styles.percent}>{Math.round(progress)}% complete</span>
+      <span className={styles.percent}>
+        {Math.round(progress)}% — {roastMode ? "heating up" : "complete"}
+      </span>
     </div>
   );
 }

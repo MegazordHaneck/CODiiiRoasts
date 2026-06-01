@@ -8,10 +8,11 @@ import {
 } from "./safety";
 
 const FALLBACK: RoastResponse = {
-  roast: "Your coordination confidence is so low, even CODiii feels bad running the scan.",
+  roast:
+    "Oh, you work in AEC? That explains why your calendar is just back-to-back coordination meetings and crying in Navisworks.",
   violations: [
     "Detected: offline fallback mode",
-    "Warning: consultant confidence below measurable threshold",
+    "Warning: coordination confidence below measurable threshold",
   ],
   fallback: true,
 };
@@ -20,11 +21,15 @@ async function callOpenAI(body: RoastRequest): Promise<RoastResponse> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error("OPENAI_API_KEY not configured");
 
-  const userContent = `Roast this conference attendee:
+  const userContent = `Roast this attendee.
+
 Name: ${body.name}
 Role: ${body.role}
 ${body.company ? `Company: ${body.company}` : ""}
-Intensity: ${body.intensity}`;
+${body.introTranscript ? `What they said to CODiii: "${body.introTranscript}"` : ""}
+Intensity: ${body.intensity}
+
+Open with something that proves you heard their intro, then land the jab.`;
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
     method: "POST",
@@ -34,7 +39,8 @@ Intensity: ${body.intensity}`;
     },
     body: JSON.stringify({
       model: "gpt-4o-mini",
-      temperature: body.intensity === "nuclear" ? 0.95 : body.intensity === "contractor" ? 0.85 : 0.7,
+      temperature:
+        body.intensity === "nuclear" ? 1 : body.intensity === "contractor" ? 0.92 : 0.82,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: buildSystemPrompt(body.intensity, body.safeMode) },
@@ -64,11 +70,12 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
 
   try {
     const body = JSON.parse(event.body ?? "{}") as RoastRequest;
-    if (!body.name?.trim() || !body.role?.trim()) {
+    const hasIntro = !!body.introTranscript?.trim();
+    if (!hasIntro && (!body.name?.trim() || !body.role?.trim())) {
       return {
         statusCode: 400,
         headers: corsHeaders(),
-        body: JSON.stringify({ error: "name and role required" }),
+        body: JSON.stringify({ error: "intro or name and role required" }),
       };
     }
 

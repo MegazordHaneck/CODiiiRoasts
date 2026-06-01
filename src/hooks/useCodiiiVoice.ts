@@ -4,7 +4,7 @@ import { codiiiVoiceProfile } from "../lib/voice/codiiiVoiceProfile";
 import { useAudioAnalyser } from "./useAudioAnalyser";
 
 export function useCodiiiVoice(volume: number, muted: boolean) {
-  const { mouthState, isSpeaking, playBuffer, stop } = useAudioAnalyser();
+  const { mouthState, mouthOpenness, isSpeaking, playBuffer, stop } = useAudioAnalyser();
 
   const speak = useCallback(
     async (text: string) => {
@@ -18,17 +18,18 @@ export function useCodiiiVoice(volume: number, muted: boolean) {
 
       if (!("speechSynthesis" in window)) return;
       const utter = new SpeechSynthesisUtterance(text);
-      utter.rate = codiiiVoiceProfile.rate;
-      utter.pitch = codiiiVoiceProfile.pitch;
+      utter.rate = codiiiVoiceProfile.fallbackRate;
+      utter.pitch = codiiiVoiceProfile.fallbackPitch;
       const voices = speechSynthesis.getVoices();
-      const childish =
-        voices.find((v) => v.name.includes("Google") && v.lang.startsWith("en")) ??
+      const preferred =
+        voices.find((v) => v.lang.startsWith("en-GB")) ??
+        voices.find((v) => v.name.includes("Google UK")) ??
         voices.find((v) => v.lang.startsWith("en"));
-      if (childish) utter.voice = childish;
+      if (preferred) utter.voice = preferred;
       speechSynthesis.speak(utter);
     },
     [muted, playBuffer, volume],
   );
 
-  return { mouthState, isSpeaking, speak, stopSpeaking: stop };
+  return { mouthState, mouthOpenness, isSpeaking, speak, stopSpeaking: stop };
 }

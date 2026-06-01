@@ -1,6 +1,7 @@
 import type { Intensity, RoastResult } from "../types";
 import fallbackRoasts from "../content/fallback-roasts.json";
 import violationTemplates from "../content/violation-templates.json";
+import { parseIntro } from "./parseIntro";
 
 type Outputs = {
   custom?: {
@@ -40,15 +41,26 @@ export function getFallbackRoast(
   name: string,
   role: string,
   intensity: Intensity,
+  introTranscript?: string,
 ): RoastResult {
   const key = normalizeRoleKey(role);
   const roasts = fallbackRoasts as Record<string, Record<Intensity, string>>;
-  const template =
-    roasts[key]?.[intensity] ?? roasts.default[intensity];
+  let template = roasts[key]?.[intensity] ?? roasts.default[intensity];
+
   const violationsMap = violationTemplates as Record<string, string[]>;
   const violations = violationsMap[key] ?? violationsMap.default;
+
+  let roast = template.replace(/\{name\}/g, name);
+  if (introTranscript?.trim()) {
+    const parsed = parseIntro(introTranscript);
+    const who = parsed.name !== "friend" ? parsed.name : name;
+    const punch = roast.replace(/^Hi [^!]+!\s*/i, "");
+    const tail = punch ? `${punch.charAt(0).toLowerCase()}${punch.slice(1)}` : "your workflow is pure chaos.";
+    roast = `Oh hi ${who}! You said you're a ${parsed.role} — that explains why ${tail}`;
+  }
+
   return {
-    roast: template.replace(/\{name\}/g, name),
+    roast,
     violations: violations.slice(0, 3),
     fallback: true,
   };
@@ -58,6 +70,7 @@ export async function fetchRoast(input: {
   name: string;
   role: string;
   company?: string;
+  introTranscript?: string;
   intensity: Intensity;
   safeMode: boolean;
 }): Promise<RoastResult> {
@@ -67,7 +80,7 @@ export async function fetchRoast(input: {
     outputs.custom?.roastUrl;
 
   if (!url) {
-    return getFallbackRoast(input.name, input.role, input.intensity);
+    return getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript);
   }
 
   try {
@@ -80,7 +93,7 @@ export async function fetchRoast(input: {
     const data = (await res.json()) as RoastResult;
     return data;
   } catch {
-    return getFallbackRoast(input.name, input.role, input.intensity);
+    return getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript);
   }
 }
 

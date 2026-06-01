@@ -12,6 +12,7 @@ export function useRoastStream() {
     name: string;
     role: string;
     company?: string;
+    introTranscript?: string;
     intensity: Intensity;
     safeMode: boolean;
   }) => {

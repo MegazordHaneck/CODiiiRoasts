@@ -28,6 +28,8 @@ type BoothContextValue = {
   setIntensity: (intensity: Intensity) => void;
   roast: RoastResult | null;
   setRoast: (roast: RoastResult | null) => void;
+  webcamPhotoUrl: string | null;
+  setWebcamPhotoUrl: (url: string | null) => void;
   settings: BoothSettings;
   updateSettings: (patch: Partial<BoothSettings>) => void;
   sessions: SessionRecord[];
@@ -53,6 +55,7 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
   const [attendee, setAttendeeState] = useState<Attendee | null>(null);
   const [intensity, setIntensity] = useState<Intensity>(loadSettings().defaultIntensity);
   const [roast, setRoast] = useState<RoastResult | null>(null);
+  const [webcamPhotoUrl, setWebcamPhotoUrl] = useState<string | null>(null);
   const [settings, setSettings] = useState<BoothSettings>(loadSettings);
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
 
@@ -82,6 +85,7 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
   const resetFlow = useCallback(() => {
     setAttendeeState(null);
     setRoast(null);
+    setWebcamPhotoUrl(null);
     setIntensity(loadSettings().defaultIntensity);
     setScreen("attract");
   }, []);
@@ -100,6 +104,8 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
       setIntensity,
       roast,
       setRoast,
+      webcamPhotoUrl,
+      setWebcamPhotoUrl,
       settings,
       updateSettings,
       sessions,
@@ -112,6 +118,7 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
       attendee,
       intensity,
       roast,
+      webcamPhotoUrl,
       settings,
       updateSettings,
       sessions,

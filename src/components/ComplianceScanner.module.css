@@ -25,6 +25,33 @@
   font-weight: 600;
 }
 
+.roastPanel {
+  background-image:
+    linear-gradient(rgba(255, 100, 30, 0.08) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 100, 30, 0.08) 1px, transparent 1px);
+}
+
+.roastPanel .label {
+  font-size: 1rem;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.roastEmoji {
+  display: inline-block;
+  animation: ember 0.8s ease-in-out infinite;
+}
+
+@keyframes ember {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
 .track {
   position: relative;
   height: 6px;

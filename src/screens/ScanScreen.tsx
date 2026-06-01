@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { CodiiiFace } from "../components/CodiiiFace";
+import { CodiiiOnFire } from "../components/CodiiiOnFire";
 import { ComplianceScanner } from "../components/ComplianceScanner";
 import { useBooth } from "../context/BoothContext";
 import { useRoastStream } from "../hooks/useRoastStream";
@@ -29,6 +29,7 @@ export function ScanScreen() {
       name: attendee.name,
       role: attendee.role,
       company: attendee.company,
+      introTranscript: attendee.introTranscript,
       intensity,
       safeMode: settings.safeMode,
     }).then((result) => {
@@ -47,12 +48,12 @@ export function ScanScreen() {
   }, [attendee, intensity, settings.safeMode, generate, setRoast, setScreen, logSession]);
 
   return (
-    <div className={styles.layout}>
-      <div className={styles.row}>
-        <CodiiiFace size={160} animate />
-        <ComplianceScanner progress={progress} glitch={progress > 85} />
-      </div>
-      <p className={styles.subtitle}>Analyzing {attendee?.name}…</p>
+    <div className={`${styles.layout} ${styles.scanLayout}`}>
+      <CodiiiOnFire intensity={intensity} size={140} active />
+      <ComplianceScanner progress={progress} glitch={progress > 85} roastMode />
+      <p className={styles.subtitle}>
+        CODiii is gearing up to roast <strong>{attendee?.name}</strong>…
+      </p>
     </div>
   );
 }

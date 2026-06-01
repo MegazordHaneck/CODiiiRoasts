@@ -14,6 +14,8 @@ export type Attendee = {
   name: string;
   role: string;
   company?: string;
+  /** Raw voice intro for personalized roast */
+  introTranscript?: string;
 };
 
 export type RoastResult = {
@@ -32,20 +34,8 @@ export type SessionRecord = {
   latencyMs: number;
 };
 
-export const ROLE_OPTIONS = [
-  "Architect",
-  "Engineer",
-  "Contractor",
-  "General Contractor",
-  "Owner",
-  "Project Manager",
-  "BIM Manager",
-  "Specifier",
-  "Other",
-] as const;
-
 export const INTENSITY_OPTIONS: { id: Intensity; label: string; desc: string }[] = [
-  { id: "light", label: "Light roast", desc: "Gentle industry ribbing" },
-  { id: "contractor", label: "Contractor mode", desc: "Field & submittal humor" },
-  { id: "nuclear", label: "Nuclear BIM", desc: "Coordination chaos satire" },
+  { id: "light", label: "Light roast", desc: "Warm tease — industry inside jokes only" },
+  { id: "contractor", label: "Contractor mode", desc: "Field-hardened burns — RFIs & redlines welcome" },
+  { id: "nuclear", label: "Nuclear BIM", desc: "Full send — coordination chaos, zero mercy" },
 ];
