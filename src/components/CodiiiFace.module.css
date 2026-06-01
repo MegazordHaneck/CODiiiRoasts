@@ -34,6 +34,10 @@
   animation: wiggle 0.35s ease-in-out infinite;
 }
 
+.liveMouth {
+  /* Driven every animation frame from audio energy */
+}
+
 @keyframes bob {
   0%,
   100% {

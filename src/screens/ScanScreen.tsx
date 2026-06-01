@@ -2,11 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { CodiiiOnFire } from "../components/CodiiiOnFire";
 import { ComplianceScanner } from "../components/ComplianceScanner";
 import { useBooth } from "../context/BoothContext";
+import { fetchSpeech } from "../lib/api";
 import { useRoastStream } from "../hooks/useRoastStream";
 import styles from "./screens.module.css";
 
+const SCAN_MS = 9000;
+
 export function ScanScreen() {
-  const { attendee, intensity, settings, setRoast, setScreen, logSession } = useBooth();
+  const {
+    attendee,
+    intensity,
+    settings,
+    setRoast,
+    setRoastSpeechBuffer,
+    setScreen,
+    logSession,
+  } = useBooth();
   const { generate } = useRoastStream();
   const [progress, setProgress] = useState(0);
   const started = useRef(false);
@@ -15,26 +26,38 @@ export function ScanScreen() {
     if (!attendee || started.current) return;
     started.current = true;
 
-    const duration = 9000;
     const start = performance.now();
     const tick = () => {
       const elapsed = performance.now() - start;
-      setProgress(Math.min(100, (elapsed / duration) * 100));
-      if (elapsed < duration) requestAnimationFrame(tick);
+      setProgress(Math.min(100, (elapsed / SCAN_MS) * 100));
+      if (elapsed < SCAN_MS) requestAnimationFrame(tick);
     };
     tick();
 
     const scanStart = performance.now();
-    generate({
+
+    const roastPromise = generate({
       name: attendee.name,
       role: attendee.role,
       company: attendee.company,
       introTranscript: attendee.introTranscript,
       intensity,
       safeMode: settings.safeMode,
-    }).then((result) => {
+    });
+
+    const speechPromise = roastPromise.then((result) => {
+      if (!result || settings.mute) return null;
+      return fetchSpeech(result.roast);
+    });
+
+    void Promise.all([
+      roastPromise,
+      speechPromise,
+      new Promise((r) => setTimeout(r, SCAN_MS)),
+    ]).then(([result, speechBuffer]) => {
       if (result) {
         setRoast(result);
+        if (speechBuffer) setRoastSpeechBuffer(speechBuffer);
         logSession({
           name: attendee.name,
           role: attendee.role,
@@ -43,13 +66,23 @@ export function ScanScreen() {
           latencyMs: Math.round(performance.now() - scanStart),
         });
       }
-      setTimeout(() => setScreen("roast"), Math.max(0, duration - (performance.now() - scanStart)));
+      setScreen("roast");
     });
-  }, [attendee, intensity, settings.safeMode, generate, setRoast, setScreen, logSession]);
+  }, [
+    attendee,
+    intensity,
+    settings.safeMode,
+    settings.mute,
+    generate,
+    setRoast,
+    setRoastSpeechBuffer,
+    setScreen,
+    logSession,
+  ]);
 
   return (
     <div className={`${styles.layout} ${styles.scanLayout}`}>
-      <CodiiiOnFire intensity={intensity} size={140} active />
+      <CodiiiOnFire intensity={intensity} size={180} active />
       <ComplianceScanner progress={progress} glitch={progress > 85} roastMode />
       <p className={styles.subtitle}>
         CODiii is gearing up to roast <strong>{attendee?.name}</strong>…

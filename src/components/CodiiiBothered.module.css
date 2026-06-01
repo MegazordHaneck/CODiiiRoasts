@@ -1,0 +1,256 @@
+.stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  filter: drop-shadow(0 20px 48px rgba(233, 112, 36, 0.45));
+}
+
+.moodCaption {
+  position: absolute;
+  bottom: -2.25rem;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 0;
+  white-space: nowrap;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--brand-primary);
+  letter-spacing: 0.03em;
+  text-shadow: 0 0 12px var(--brand-glow);
+  animation: captionPulse 2.8s ease-in-out infinite;
+}
+
+.mascot {
+  width: 100%;
+  height: 100%;
+}
+
+.svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+  overflow: visible;
+}
+
+.head {
+  transform-origin: 100px 110px;
+}
+
+.antennae {
+  transform-origin: 100px 40px;
+}
+
+/* --- Layer visibility per mood --- */
+.eyesLaugh,
+.eyesExplode,
+.eyesTongue,
+.mouthLaugh,
+.mouthOpen,
+.mouthFire,
+.flames,
+.tongue,
+.explodeBurst {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.eyesNormal,
+.mouthSmile {
+  opacity: 1;
+}
+
+/* FIRE */
+.fire .mouthSmile,
+.fire .mouthLaugh {
+  opacity: 0;
+}
+.fire .mouthFire,
+.fire .flames {
+  opacity: 1;
+}
+.fire .head {
+  animation: heatShake 0.35s ease-in-out infinite;
+}
+.fire .flame1,
+.fire .flame2,
+.fire .flame3,
+.fire .flame4 {
+  transform-origin: center bottom;
+  animation: flicker 0.4s ease-in-out infinite;
+}
+.fire .flame2 {
+  animation-delay: 0.1s;
+}
+.fire .flame3 {
+  animation-delay: 0.2s;
+}
+.fire .flame4 {
+  animation-delay: 0.05s;
+}
+
+/* LAUGH */
+.laugh .eyesNormal,
+.laugh .mouthSmile {
+  opacity: 0;
+}
+.laugh .eyesLaugh,
+.laugh .mouthLaugh {
+  opacity: 1;
+}
+.laugh .head {
+  animation: laughBob 0.28s ease-in-out infinite;
+}
+.laugh .antennae {
+  animation: wiggle 0.32s ease-in-out infinite;
+}
+
+/* EXPLODE */
+.explode .eyesNormal,
+.explode .mouthSmile {
+  opacity: 0;
+}
+.explode .eyesExplode,
+.explode .mouthOpen,
+.explode .explodeBurst {
+  opacity: 1;
+}
+.explode .head {
+  animation: explodeHead 0.55s ease-out infinite;
+}
+.explode .explodeBurst {
+  animation: burstSpin 0.8s linear infinite;
+}
+.explode .antennae {
+  animation: antennaFly 0.55s ease-in-out infinite;
+}
+
+/* TONGUE */
+.tongue .eyesNormal,
+.tongue .mouthSmile {
+  opacity: 0;
+}
+.tongue .eyesTongue,
+.tongue .mouthOpen,
+.tongue .tongue {
+  opacity: 1;
+}
+.tongue .head {
+  animation: tongueTilt 1.2s ease-in-out infinite;
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(1.18) scaleX(0.92);
+  }
+}
+
+@keyframes heatShake {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  25% {
+    transform: translate(-2px, 1px);
+  }
+  75% {
+    transform: translate(2px, -1px);
+  }
+}
+
+@keyframes laughBob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  50% {
+    transform: rotate(4deg);
+  }
+}
+
+@keyframes explodeHead {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  35% {
+    transform: scale(1.14) rotate(3deg);
+  }
+  55% {
+    transform: scale(0.92) rotate(-4deg);
+  }
+  75% {
+    transform: scale(1.08) rotate(2deg);
+  }
+}
+
+@keyframes burstSpin {
+  from {
+    transform: rotate(0deg) scale(1);
+  }
+  to {
+    transform: rotate(360deg) scale(1.05);
+  }
+}
+
+@keyframes antennaFly {
+  0%,
+  100% {
+    transform: rotate(0deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-8deg) translateY(-4px);
+  }
+}
+
+@keyframes tongueTilt {
+  0%,
+  100% {
+    transform: rotate(-3deg);
+  }
+  50% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes captionPulse {
+  0%,
+  100% {
+    opacity: 0.85;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fire .head,
+  .fire .flame1,
+  .fire .flame2,
+  .fire .flame3,
+  .fire .flame4,
+  .laugh .head,
+  .laugh .antennae,
+  .explode .head,
+  .explode .explodeBurst,
+  .explode .antennae,
+  .tongue .head,
+  .moodCaption {
+    animation: none;
+  }
+}

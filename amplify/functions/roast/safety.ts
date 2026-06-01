@@ -26,6 +26,8 @@ export type RoastRequest = {
   introTranscript?: string;
   intensity: Intensity;
   safeMode: boolean;
+  /** Normalized roast lines already used this booth — must not repeat */
+  excludeRoasts?: string[];
 };
 
 export type RoastResponse = {
@@ -63,8 +65,8 @@ Rules: No slurs. No politics. No personal appearance attacks.
 Satire targets: coordination, drawings, schedules, BIM, owners, consultants, specs.
 
 Respond ONLY with valid JSON: {"roast":"...","violations":["...","..."]}
-Include 2-3 fake compliance violations.
+Include exactly 2-3 fake compliance violations that DIRECTLY riff on specific words or jokes in YOUR roast (not generic role templates). Each violation should feel like CODiii flagged what was just said.
 
 Example style:
-{"roast":"Oh hi Maya! You said you chase RFIs for fun — that explains why your inbox has its own zip code and your weekends don't.","violations":["Detected: RFI hobbyist syndrome","Warning: inbox gravitational pull critical"]}`;
+{"roast":"Oh hi Maya! You said you chase RFIs for fun — that explains why your inbox has its own zip code and your weekends don't.","violations":["Logged: RFI hobbyist confession on record","Warning: inbox gravitational pull critical","Violation: weekends forfeited to coordination"]}`;
 }

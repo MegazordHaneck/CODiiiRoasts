@@ -30,6 +30,8 @@ type BoothContextValue = {
   setRoast: (roast: RoastResult | null) => void;
   webcamPhotoUrl: string | null;
   setWebcamPhotoUrl: (url: string | null) => void;
+  roastSpeechBuffer: ArrayBuffer | null;
+  setRoastSpeechBuffer: (buffer: ArrayBuffer | null) => void;
   settings: BoothSettings;
   updateSettings: (patch: Partial<BoothSettings>) => void;
   sessions: SessionRecord[];
@@ -56,6 +58,7 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
   const [intensity, setIntensity] = useState<Intensity>(loadSettings().defaultIntensity);
   const [roast, setRoast] = useState<RoastResult | null>(null);
   const [webcamPhotoUrl, setWebcamPhotoUrl] = useState<string | null>(null);
+  const [roastSpeechBuffer, setRoastSpeechBuffer] = useState<ArrayBuffer | null>(null);
   const [settings, setSettings] = useState<BoothSettings>(loadSettings);
   const [sessions, setSessions] = useState<SessionRecord[]>([]);
 
@@ -86,6 +89,7 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
     setAttendeeState(null);
     setRoast(null);
     setWebcamPhotoUrl(null);
+    setRoastSpeechBuffer(null);
     setIntensity(loadSettings().defaultIntensity);
     setScreen("attract");
   }, []);
@@ -106,6 +110,8 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
       setRoast,
       webcamPhotoUrl,
       setWebcamPhotoUrl,
+      roastSpeechBuffer,
+      setRoastSpeechBuffer,
       settings,
       updateSettings,
       sessions,
@@ -119,6 +125,7 @@ export function BoothProvider({ children }: { children: React.ReactNode }) {
       intensity,
       roast,
       webcamPhotoUrl,
+      roastSpeechBuffer,
       settings,
       updateSettings,
       sessions,

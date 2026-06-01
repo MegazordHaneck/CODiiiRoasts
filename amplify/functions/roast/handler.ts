@@ -21,6 +21,7 @@ async function callOpenAI(body: RoastRequest): Promise<RoastResponse> {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) throw new Error("OPENAI_API_KEY not configured");
 
+  const exclude = body.excludeRoasts?.filter(Boolean).slice(-40) ?? [];
   const userContent = `Roast this attendee.
 
 Name: ${body.name}
@@ -28,6 +29,7 @@ Role: ${body.role}
 ${body.company ? `Company: ${body.company}` : ""}
 ${body.introTranscript ? `What they said to CODiii: "${body.introTranscript}"` : ""}
 Intensity: ${body.intensity}
+${exclude.length ? `\nNEVER repeat or closely paraphrase these roasts already used at the booth:\n${exclude.map((r) => `- ${r}`).join("\n")}\nWrite something fresh.` : ""}
 
 Open with something that proves you heard their intro, then land the jab.`;
 
@@ -40,7 +42,7 @@ Open with something that proves you heard their intro, then land the jab.`;
     body: JSON.stringify({
       model: "gpt-4o-mini",
       temperature:
-        body.intensity === "nuclear" ? 1 : body.intensity === "contractor" ? 0.92 : 0.82,
+        body.intensity === "nuclear" ? 1.05 : body.intensity === "contractor" ? 0.95 : 0.88,
       response_format: { type: "json_object" },
       messages: [
         { role: "system", content: buildSystemPrompt(body.intensity, body.safeMode) },

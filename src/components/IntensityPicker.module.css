@@ -1,9 +1,9 @@
 .grid {
   display: flex;
   flex-direction: column;
-  gap: 0.85rem;
+  gap: 1rem;
   width: 100%;
-  max-width: 520px;
+  max-width: 640px;
 }
 
 .card {
@@ -84,7 +84,7 @@
 
 .label {
   font-family: var(--font-display);
-  font-size: 1.15rem;
+  font-size: 1.35rem;
   color: var(--brand-primary);
 }
 

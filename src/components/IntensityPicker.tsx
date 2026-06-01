@@ -25,7 +25,7 @@ export function IntensityPicker({ value, onChange }: Props) {
               <span className={styles.desc}>{opt.desc}</span>
               {selected && <span className={styles.badge}>Selected</span>}
             </div>
-            <CodiiiOnFire intensity={opt.id} size={96} active={selected} />
+            <CodiiiOnFire intensity={opt.id} size={112} active={selected} />
           </button>
         );
       })}

@@ -1,7 +1,8 @@
 import type { Intensity, RoastResult } from "../types";
 import fallbackRoasts from "../content/fallback-roasts.json";
-import violationTemplates from "../content/violation-templates.json";
+import { violationsForRoast } from "./deriveViolations";
 import { parseIntro } from "./parseIntro";
+import { getUsedRoasts, isRoastUsed, markRoastUsed } from "./roastHistory";
 
 type Outputs = {
   custom?: {
@@ -37,18 +38,34 @@ function normalizeRoleKey(role: string): string {
   return "default";
 }
 
+function allFallbackTemplates(
+  key: string,
+  intensity: Intensity,
+): string[] {
+  const roasts = fallbackRoasts as Record<string, Record<Intensity, string>>;
+  const pool = new Set<string>();
+  for (const roleKey of [key, "default"]) {
+    const t = roasts[roleKey]?.[intensity];
+    if (t) pool.add(t);
+  }
+  return [...pool];
+}
+
 export function getFallbackRoast(
   name: string,
   role: string,
   intensity: Intensity,
   introTranscript?: string,
+  attempt = 0,
 ): RoastResult {
   const key = normalizeRoleKey(role);
-  const roasts = fallbackRoasts as Record<string, Record<Intensity, string>>;
-  let template = roasts[key]?.[intensity] ?? roasts.default[intensity];
-
-  const violationsMap = violationTemplates as Record<string, string[]>;
-  const violations = violationsMap[key] ?? violationsMap.default;
+  const used = new Set(getUsedRoasts());
+  const templates = allFallbackTemplates(key, intensity).filter(
+    (t) => !used.has(t.replace(/\{name\}/g, name).trim().toLowerCase().replace(/\s+/g, " ")),
+  );
+  let template =
+    templates[Math.floor(Math.random() * templates.length)] ??
+    allFallbackTemplates(key, intensity)[0];
 
   let roast = template.replace(/\{name\}/g, name);
   if (introTranscript?.trim()) {
@@ -59,11 +76,43 @@ export function getFallbackRoast(
     roast = `Oh hi ${who}! You said you're a ${parsed.role} — that explains why ${tail}`;
   }
 
-  return {
-    roast,
-    violations: violations.slice(0, 3),
-    fallback: true,
-  };
+  if (isRoastUsed(roast) && attempt < 5) {
+    const salt = ` (booth pass ${Date.now() % 1000})`;
+    if (!roast.includes("pass")) {
+      roast = `${roast.replace(/\.$/, "")}${salt}.`;
+    } else {
+      return getFallbackRoast(name, role, intensity, introTranscript, attempt + 1);
+    }
+  }
+
+  const violations = violationsForRoast(roast);
+  return { roast, violations, fallback: true };
+}
+
+function finalizeRoast(data: RoastResult): RoastResult {
+  const violations = violationsForRoast(data.roast, data.violations);
+  return { ...data, violations };
+}
+
+async function requestRoast(
+  url: string,
+  input: {
+    name: string;
+    role: string;
+    company?: string;
+    introTranscript?: string;
+    intensity: Intensity;
+    safeMode: boolean;
+    excludeRoasts?: string[];
+  },
+): Promise<RoastResult> {
+  const res = await fetch(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(input),
+  });
+  if (!res.ok) throw new Error("roast failed");
+  return (await res.json()) as RoastResult;
 }
 
 export async function fetchRoast(input: {
@@ -75,33 +124,45 @@ export async function fetchRoast(input: {
   safeMode: boolean;
 }): Promise<RoastResult> {
   const outputs = await loadOutputs();
-  const url =
-    import.meta.env.VITE_ROAST_URL ??
-    outputs.custom?.roastUrl;
+  const url = import.meta.env.VITE_ROAST_URL ?? outputs.custom?.roastUrl;
+  const excludeRoasts = getUsedRoasts().slice(-80);
 
-  if (!url) {
-    return getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript);
-  }
+  const pickUnique = async (): Promise<RoastResult> => {
+    if (!url) {
+      return finalizeRoast(getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript));
+    }
+
+    let last: RoastResult | null = null;
+    for (let attempt = 0; attempt < 3; attempt++) {
+      const data = finalizeRoast(
+        await requestRoast(url, {
+          ...input,
+          excludeRoasts: [...excludeRoasts, ...(last ? [last.roast] : [])],
+        }),
+      );
+      if (!isRoastUsed(data.roast)) return data;
+      last = data;
+    }
+    if (last && !isRoastUsed(last.roast)) return last;
+    return finalizeRoast(getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript));
+  };
 
   try {
-    const res = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(input),
-    });
-    if (!res.ok) throw new Error("roast failed");
-    const data = (await res.json()) as RoastResult;
+    const data = await pickUnique();
+    markRoastUsed(data.roast);
     return data;
   } catch {
-    return getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript);
+    const data = finalizeRoast(
+      getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript),
+    );
+    markRoastUsed(data.roast);
+    return data;
   }
 }
 
 export async function fetchSpeech(text: string): Promise<ArrayBuffer | null> {
   const outputs = await loadOutputs();
-  const url =
-    import.meta.env.VITE_SPEAK_URL ??
-    outputs.custom?.speakUrl;
+  const url = import.meta.env.VITE_SPEAK_URL ?? outputs.custom?.speakUrl;
 
   if (!url) return null;
 

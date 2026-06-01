@@ -38,7 +38,7 @@ export function IntakeScreen() {
 
   return (
     <div className={styles.layout}>
-      <CodiiiFace size={200} animate listening={listening} />
+      <CodiiiFace size={260} animate listening={listening} />
       <h1 className={styles.title}>Introduce yourself to CODiii</h1>
       <p className={styles.subtitle}>
         Say: &ldquo;Hey CODiii, my name is ___, from ___ — and this is what I do.&rdquo;

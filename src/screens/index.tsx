@@ -1,6 +1,8 @@
+import { BottomFlameBar } from "../components/BottomFlameBar";
 import { useBooth } from "../context/BoothContext";
 import { AdminScreen } from "./AdminScreen";
 import { AttractScreen } from "./AttractScreen";
+import boothStyles from "./BoothFlow.module.css";
 import { IntakeScreen } from "./IntakeScreen";
 import { IntensityScreen } from "./IntensityScreen";
 import { PitchScreen } from "./PitchScreen";
@@ -12,26 +14,42 @@ import { ViolationsScreen } from "./ViolationsScreen";
 export function BoothFlow() {
   const { screen } = useBooth();
 
+  let content;
   switch (screen) {
     case "attract":
-      return <AttractScreen />;
+      content = <AttractScreen />;
+      break;
     case "intake":
-      return <IntakeScreen />;
+      content = <IntakeScreen />;
+      break;
     case "intensity":
-      return <IntensityScreen />;
+      content = <IntensityScreen />;
+      break;
     case "scan":
-      return <ScanScreen />;
+      content = <ScanScreen />;
+      break;
     case "roast":
-      return <RoastScreen />;
+      content = <RoastScreen />;
+      break;
     case "violations":
-      return <ViolationsScreen />;
+      content = <ViolationsScreen />;
+      break;
     case "pitch":
-      return <PitchScreen />;
+      content = <PitchScreen />;
+      break;
     case "share":
-      return <ShareScreen />;
+      content = <ShareScreen />;
+      break;
     default:
-      return <AttractScreen />;
+      content = <AttractScreen />;
   }
+
+  return (
+    <>
+      <BottomFlameBar />
+      <div className={boothStyles.shell}>{content}</div>
+    </>
+  );
 }
 
 export { AdminScreen };
