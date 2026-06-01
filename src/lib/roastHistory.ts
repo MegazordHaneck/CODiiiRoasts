@@ -1,5 +1,8 @@
+import { isRoastRepetitive } from "./roastVariety";
+
 const STORAGE_KEY = "codiii-used-roasts";
-const MAX_STORED = 400;
+/** Expo-scale: remember thousands of roasts across a multi-day booth */
+const MAX_STORED = 3500;
 
 function normalize(roast: string): string {
   return roast.trim().toLowerCase().replace(/\s+/g, " ");
@@ -25,7 +28,9 @@ export function getUsedRoasts(): string[] {
 
 export function isRoastUsed(roast: string): boolean {
   const key = normalize(roast);
-  return load().includes(key);
+  const used = load();
+  if (used.includes(key)) return true;
+  return isRoastRepetitive(roast, used);
 }
 
 export function markRoastUsed(roast: string): void {

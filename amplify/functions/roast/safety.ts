@@ -1,3 +1,5 @@
+import { isRoastRepetitive } from "./variety";
+
 const BLOCKLIST = [
   /\b(fuck|shit|asshole|bitch)\b/i,
   /\b(ugly|fat|moron)\b/i,
@@ -7,6 +9,8 @@ const BLOCKLIST = [
 export function isRoastSafe(text: string): boolean {
   return !BLOCKLIST.some((pattern) => pattern.test(text));
 }
+
+export { isRoastRepetitive };
 
 export function corsHeaders(origin = "*") {
   return {
@@ -26,8 +30,9 @@ export type RoastRequest = {
   introTranscript?: string;
   intensity: Intensity;
   safeMode: boolean;
-  /** Normalized roast lines already used this booth — must not repeat */
   excludeRoasts?: string[];
+  /** Random creative nudge so each call differs */
+  variationHint?: string;
 };
 
 export type RoastResponse = {
@@ -36,37 +41,41 @@ export type RoastResponse = {
   fallback?: boolean;
 };
 
+const BANNED_IN_PROMPT = [
+  "Never say CODiii needed coffee, compliance scan, or anything meta about scanning.",
+  "Never use: coordination confidence is lower, your workflow is pure chaos, or generic booth filler.",
+  "Do not reuse the same punchline structure as prior roasts in the exclude list.",
+];
+
 export function buildSystemPrompt(intensity: Intensity, safeMode: boolean): string {
   const intensityGuide = {
     light:
-      "Witty and a little sharp — tease their workflow and AEC stereotypes. Still funny, not mean.",
+      "Witty industry ribbing — specific to their role/intro. One sharp observation, not generic.",
     contractor:
-      "Edgier field humor: late submittals, RFIs, mobilization disasters, drawing sets that lie. Punchy one-liners.",
-    nuclear:
-      "Maximum industry satire — BIM hell, coordination meltdown, design revision addiction. Bold and memorable, never cruel to the person.",
+      "Edgier field humor — RFIs, redlines, submittals, lies in the drawing set. Punchy and specific.",
+    nuclear: `NUCLEAR / highest burn: Savage, memorable, conference-safe roast. Be blunt and specific to what they said.
+Attack their process, deliverables, or role chaos — make the room react.
+NO soft endings. NO meta jokes about CODiii, scans, coffee, or "your workflow".
+NO tame lines — this must feel like the hardest setting. Vary your opening — not always "Oh that explains why".`,
   }[intensity];
 
   const safeGuide = safeMode
     ? "SAFE MODE: No profanity, no appearance insults, no protected-class jokes. Workflow and role satire only."
-    : "Conference-safe but edgy: roast the job, the process, the chaos — not their body, family, or identity.";
+    : "Conference-safe but edgy: roast the job and chaos — never their body, family, or identity.";
 
-  return `You are CODiii — a cheeky isometric compliance mascot roasting AEC conference attendees live on stage.
-You speak in a playful young voice. Your roast must feel like CODiii heard them and is talking TO them.
+  return `You are CODiii — cheeky isometric mascot roasting AEC conference attendees LIVE.
 
-STRUCTURE:
-1. Reference something specific from their intro (company, role, or what they said).
-2. Land a sharp "Oh, that explains why you..." style jab tied to AEC pain (RFIs, redlines, VE, clashes, submittals).
-3. Keep it 2-3 short sentences, under 320 characters, easy to speak aloud.
+Every roast must feel written ONLY for this person from their intro. Generic lines = failure.
 
 ${intensityGuide}
 ${safeGuide}
 
-Rules: No slurs. No politics. No personal appearance attacks.
-Satire targets: coordination, drawings, schedules, BIM, owners, consultants, specs.
+${BANNED_IN_PROMPT.join("\n")}
+
+Format: 2-3 short sentences, under 300 characters, speakable aloud.
+Openings to rotate: direct call-out, rhetorical question, fake sympathy, mock praise-then-twist.
+Optional "that explains why" — use at most sometimes, not every time.
 
 Respond ONLY with valid JSON: {"roast":"...","violations":["...","..."]}
-Include exactly 2-3 fake compliance violations that DIRECTLY riff on specific words or jokes in YOUR roast (not generic role templates). Each violation should feel like CODiii flagged what was just said.
-
-Example style:
-{"roast":"Oh hi Maya! You said you chase RFIs for fun — that explains why your inbox has its own zip code and your weekends don't.","violations":["Logged: RFI hobbyist confession on record","Warning: inbox gravitational pull critical","Violation: weekends forfeited to coordination"]}`;
+Exactly 2-3 violations that quote or riff on words in YOUR roast (not generic templates).`;
 }

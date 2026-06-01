@@ -37,5 +37,5 @@ export type SessionRecord = {
 export const INTENSITY_OPTIONS: { id: Intensity; label: string; desc: string }[] = [
   { id: "light", label: "Light roast", desc: "Warm tease — industry inside jokes only" },
   { id: "contractor", label: "Contractor mode", desc: "Field-hardened burns — RFIs & redlines welcome" },
-  { id: "nuclear", label: "Nuclear BIM", desc: "Full send — coordination chaos, zero mercy" },
+  { id: "nuclear", label: "Nuclear BIM", desc: "Hardest burn — blunt, specific, no soft filler" },
 ];

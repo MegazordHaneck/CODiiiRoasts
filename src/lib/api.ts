@@ -1,8 +1,14 @@
 import type { Intensity, RoastResult } from "../types";
-import fallbackRoasts from "../content/fallback-roasts.json";
+import { getTemplatePool, type RolePoolKey } from "../content/roast-pools";
 import { violationsForRoast } from "./deriveViolations";
 import { parseIntro } from "./parseIntro";
-import { getUsedRoasts, isRoastUsed, markRoastUsed } from "./roastHistory";
+import { getUsedRoasts, markRoastUsed } from "./roastHistory";
+import {
+  CREATIVE_ANGLES,
+  generateCombinatorialRoast,
+  isRoastRepetitive,
+  wrapIntroRoast,
+} from "./roastVariety";
 
 type Outputs = {
   custom?: {
@@ -26,7 +32,7 @@ async function loadOutputs(): Promise<Outputs> {
   }
 }
 
-function normalizeRoleKey(role: string): string {
+function normalizeRoleKey(role: string): RolePoolKey {
   const r = role.toLowerCase();
   if (r.includes("architect")) return "architect";
   if (r.includes("engineer")) return "engineer";
@@ -39,19 +45,6 @@ function normalizeRoleKey(role: string): string {
   return "default";
 }
 
-function allFallbackTemplates(
-  key: string,
-  intensity: Intensity,
-): string[] {
-  const roasts = fallbackRoasts as Record<string, Record<Intensity, string>>;
-  const pool = new Set<string>();
-  for (const roleKey of [key, "default"]) {
-    const t = roasts[roleKey]?.[intensity];
-    if (t) pool.add(t);
-  }
-  return [...pool];
-}
-
 export function getFallbackRoast(
   name: string,
   role: string,
@@ -60,34 +53,49 @@ export function getFallbackRoast(
   attempt = 0,
 ): RoastResult {
   const key = normalizeRoleKey(role);
-  const used = new Set(getUsedRoasts());
-  const templates = allFallbackTemplates(key, intensity).filter(
-    (t) => !used.has(t.replace(/\{name\}/g, name).trim().toLowerCase().replace(/\s+/g, " ")),
-  );
-  let template =
-    templates[Math.floor(Math.random() * templates.length)] ??
-    allFallbackTemplates(key, intensity)[0];
+  const used = getUsedRoasts();
+  const pool = getTemplatePool(key, intensity);
 
-  let roast = template.replace(/\{name\}/g, name);
-  if (introTranscript?.trim()) {
-    const parsed = parseIntro(introTranscript);
-    const who = parsed.name !== "friend" ? parsed.name : name;
-    const punch = roast.replace(/^Hi [^!]+!\s*/i, "");
-    const tail = punch ? `${punch.charAt(0).toLowerCase()}${punch.slice(1)}` : "your workflow is pure chaos.";
-    roast = `Oh hi ${who}! You said you're a ${parsed.role} — that explains why ${tail}`;
-  }
+  const parsed = introTranscript?.trim() ? parseIntro(introTranscript) : null;
+  const who = parsed && parsed.name !== "friend" ? parsed.name : name;
+  const roleLabel = parsed?.role ?? role;
 
-  if (isRoastUsed(roast) && attempt < 5) {
-    const salt = ` (booth pass ${Date.now() % 1000})`;
-    if (!roast.includes("pass")) {
-      roast = `${roast.replace(/\.$/, "")}${salt}.`;
-    } else {
-      return getFallbackRoast(name, role, intensity, introTranscript, attempt + 1);
+  let roast: string;
+
+  if (attempt < pool.length * 2) {
+    const available = pool.filter((t) => {
+      const filled = t.replace(/\{name\}/g, name);
+      const candidate =
+        parsed && introTranscript?.trim()
+          ? wrapIntroRoast(who, roleLabel, filled, attempt)
+          : filled;
+      return !isRoastRepetitive(candidate, used);
+    });
+    const template =
+      available[attempt % Math.max(available.length, 1)] ??
+      pool[(attempt + Math.floor(Math.random() * pool.length)) % pool.length];
+
+    roast =
+      parsed && introTranscript?.trim()
+        ? wrapIntroRoast(who, roleLabel, template.replace(/\{name\}/g, name), attempt)
+        : template.replace(/\{name\}/g, name);
+  } else {
+    const seed = attempt + Date.now() + name.length;
+    roast = generateCombinatorialRoast(name, intensity, seed);
+    if (parsed && introTranscript?.trim()) {
+      roast = wrapIntroRoast(who, roleLabel, roast, attempt);
     }
   }
 
-  const violations = violationsForRoast(roast);
-  return { roast, violations, fallback: true };
+  if (isRoastRepetitive(roast, used) && attempt < 40) {
+    return getFallbackRoast(name, role, intensity, introTranscript, attempt + 1);
+  }
+
+  return {
+    roast,
+    violations: violationsForRoast(roast),
+    fallback: true,
+  };
 }
 
 function finalizeRoast(data: RoastResult): RoastResult {
@@ -105,6 +113,7 @@ async function requestRoast(
     intensity: Intensity;
     safeMode: boolean;
     excludeRoasts?: string[];
+    variationHint?: string;
   },
 ): Promise<RoastResult> {
   const res = await fetch(url, {
@@ -126,26 +135,31 @@ export async function fetchRoast(input: {
 }): Promise<RoastResult> {
   const outputs = await loadOutputs();
   const url = import.meta.env.VITE_ROAST_URL ?? outputs.custom?.roastUrl;
-  const excludeRoasts = getUsedRoasts().slice(-80);
+  const excludeRoasts = getUsedRoasts().slice(-150);
 
   const pickUnique = async (): Promise<RoastResult> => {
     if (!url) {
       return finalizeRoast(getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript));
     }
 
-    let last: RoastResult | null = null;
-    for (let attempt = 0; attempt < 3; attempt++) {
+    const tried: string[] = [];
+    for (let attempt = 0; attempt < 8; attempt++) {
       const data = finalizeRoast(
         await requestRoast(url, {
           ...input,
-          excludeRoasts: [...excludeRoasts, ...(last ? [last.roast] : [])],
+          excludeRoasts: [...excludeRoasts, ...tried],
+          variationHint: CREATIVE_ANGLES[(attempt + input.name.length) % CREATIVE_ANGLES.length],
         }),
       );
-      if (!isRoastUsed(data.roast)) return data;
-      last = data;
+      if (!isRoastRepetitive(data.roast, [...excludeRoasts, ...tried])) {
+        return data;
+      }
+      tried.push(data.roast);
     }
-    if (last && !isRoastUsed(last.roast)) return last;
-    return finalizeRoast(getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript));
+
+    return finalizeRoast(
+      getFallbackRoast(input.name, input.role, input.intensity, input.introTranscript, tried.length),
+    );
   };
 
   try {

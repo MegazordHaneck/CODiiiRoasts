@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { exportSessionsCsv } from "../lib/api";
+import { countTemplates } from "../content/roast-pools";
 import { useBooth } from "../context/BoothContext";
+import { clearRoastHistory, getUsedRoasts } from "../lib/roastHistory";
 import { INTENSITY_OPTIONS } from "../types";
 import type { Intensity } from "../types";
 import styles from "./screens.module.css";
@@ -90,9 +92,20 @@ export function AdminScreen() {
         </div>
         <p className={styles.subtitle}>
           Sessions: {sessions.length} · Fallbacks: {sessions.filter((s) => s.fallback).length}
+          <br />
+          Roast memory: {getUsedRoasts().length} used · Offline pool: {countTemplates("default")}+ lines
         </p>
         <div className={styles.actions}>
           <button type="button" className={styles.btnSecondary} onClick={exportCsv}>Export CSV</button>
+          <button
+            type="button"
+            className={styles.btnSecondary}
+            onClick={() => {
+              if (window.confirm("Clear roast memory for a fresh expo day?")) clearRoastHistory();
+            }}
+          >
+            Clear roast memory
+          </button>
           <button type="button" className={styles.btnPrimary} onClick={killSwitch}>Kill switch</button>
         </div>
       </div>
