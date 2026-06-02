@@ -67,17 +67,17 @@ function functionUrlCors(methods: HttpMethod[]) {
 
 const roastUrl = backend.roast.resources.lambda.addFunctionUrl({
   authType: FunctionUrlAuthType.NONE,
-  cors: functionUrlCors([HttpMethod.POST, HttpMethod.OPTIONS]),
+  cors: functionUrlCors([HttpMethod.POST]),
 });
 
 const speakUrl = backend.speak.resources.lambda.addFunctionUrl({
   authType: FunctionUrlAuthType.NONE,
-  cors: functionUrlCors([HttpMethod.POST, HttpMethod.OPTIONS]),
+  cors: functionUrlCors([HttpMethod.POST]),
 });
 
 const shareApiUrl = backend.share.resources.lambda.addFunctionUrl({
   authType: FunctionUrlAuthType.NONE,
-  cors: functionUrlCors([HttpMethod.GET, HttpMethod.POST, HttpMethod.OPTIONS]),
+  cors: functionUrlCors([HttpMethod.GET, HttpMethod.POST]),
 });
 
 backend.addOutput({
