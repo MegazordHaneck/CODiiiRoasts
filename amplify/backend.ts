@@ -3,7 +3,6 @@ import { Duration, RemovalPolicy } from "aws-cdk-lib";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { HttpMethods } from "aws-cdk-lib/aws-s3";
 import { Bucket } from "aws-cdk-lib/aws-s3";
-import { EmailIdentity, Identity } from "aws-cdk-lib/aws-ses";
 import { FunctionUrlAuthType, HttpMethod } from "aws-cdk-lib/aws-lambda";
 import { roast } from "./functions/roast/resource";
 import { share } from "./functions/share/resource";
@@ -35,13 +34,6 @@ backend.share.addEnvironment(
 );
 backend.share.addEnvironment("SHARE_FROM_EMAIL", process.env.SHARE_FROM_EMAIL ?? "");
 backend.share.addEnvironment("SES_REGION", process.env.SES_REGION ?? "ca-central-1");
-
-const shareFromEmail = process.env.SHARE_FROM_EMAIL?.trim();
-if (shareFromEmail) {
-  new EmailIdentity(shareStack, "ShareFromEmail", {
-    identity: Identity.email(shareFromEmail),
-  });
-}
 
 backend.share.resources.lambda.addToRolePolicy(
   new PolicyStatement({
