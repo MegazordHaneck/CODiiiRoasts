@@ -19,23 +19,6 @@ export function buildShareCaption(roast: string): string {
 
 export type SharePlatform = "twitter" | "linkedin" | "facebook" | "instagram";
 
-export function getShareUrl(platform: SharePlatform, caption: string): string | null {
-  const encoded = encodeURIComponent(caption);
-
-  switch (platform) {
-    case "twitter":
-      return `https://twitter.com/intent/tweet?text=${encoded}`;
-    case "linkedin":
-      return `https://www.linkedin.com/feed/?shareActive=true&text=${encoded}`;
-    case "facebook":
-      return `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(SHARE_SITE_URL)}&hashtag=${encodeURIComponent("CODiii")}`;
-    case "instagram":
-      return null;
-    default:
-      return null;
-  }
-}
-
 export const SHARE_PLATFORMS: {
   id: SharePlatform;
   label: string;
@@ -44,11 +27,11 @@ export const SHARE_PLATFORMS: {
   {
     id: "instagram",
     label: "Instagram",
-    hint: "Share sheet or save — then paste in Stories or feed",
+    hint: "Share card image + caption — pick Instagram in the menu",
   },
-  { id: "linkedin", label: "LinkedIn", hint: "Opens LinkedIn with your caption ready" },
-  { id: "facebook", label: "Facebook", hint: "Opens Facebook — caption copied for you" },
-  { id: "twitter", label: "X / Twitter", hint: "Opens with your caption ready to post" },
+  { id: "linkedin", label: "LinkedIn", hint: "Share card image + caption — pick LinkedIn in the menu" },
+  { id: "facebook", label: "Facebook", hint: "Share card image + caption — pick Facebook in the menu" },
+  { id: "twitter", label: "X / Twitter", hint: "Share card image + caption — pick X in the menu" },
 ];
 
 /** Booth phone flow — Instagram, LinkedIn, Facebook only. */

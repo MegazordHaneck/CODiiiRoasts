@@ -108,6 +108,14 @@
   color: var(--brand-primary);
 }
 
+.subheading {
+  margin: -0.35rem 0 0;
+  font-size: 0.88rem;
+  line-height: 1.45;
+  text-align: center;
+  color: var(--text-muted);
+}
+
 .platformsPhone {
   grid-template-columns: 1fr;
   gap: 0.55rem;
