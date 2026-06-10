@@ -1,5 +1,7 @@
 import type { Intensity } from "../../types";
+import { ARCHITECT_MEAN_LINES } from "./architectVariety";
 import { dimensionalOutputsForHatGroup, type IndustryHat } from "./loadHats";
+import { formatHatArchetypeBlock } from "./hatArchetypes";
 import { getIndustryHat } from "./matchHat";
 
 function pick<T>(arr: T[], seed: number): T {
@@ -37,6 +39,10 @@ const GROUP_MEAN: Record<string, string[]> = {
   ],
   gc_field: [
     `{name}, you promised float — float ghosted everyone. Your OAC on {jargon} is RFIs wearing a tie. And your weekly recovery speech? Fiction with logos.`,
+  ],
+  bim_vdc: [
+    `{name}, your federated model is a divorce — everyone's a parent, nobody has custody. Your clash report on {jargon} has 9,000 issues and you closed three like that's coordination. And your LOD slide? Fiction with a BEP appendix.`,
+    `{name}, you run Navisworks like group therapy with section boxes. Your {jargon} issue tracker is where coordination goes to get a ticket number instead of a fix.`,
   ],
   structural_site_trade: [
     `{name}, you mobilized on drawings that were wrong in the printer. Your {jargon} install is art; your coordination with design is MMA. And your daily report still says waiting on design — religion.`,
@@ -95,6 +101,18 @@ const GROUP_SHORT: Record<string, Record<Intensity, string[]>> = {
     nuclear: ["Hi {name}! You're the final boss of {jargon} — and you know it."],
     nsfw: [],
   },
+  bim_vdc: {
+    light: ["Hi {name}! Your federated model on {jargon} is a soap opera with grid lines."],
+    contractor: ["Hi {name}! Your clash report on {jargon} is a cry for help in 3D."],
+    nuclear: ["Hi {name}! LOD 500 on the deck, LOD 200 in the model — classic {label}."],
+    nsfw: [],
+  },
+  architect: {
+    light: ["Hi {name}! Your {jargon} elevation is magazine-ready — your section is still in therapy."],
+    contractor: ["Hi {name}! Your {jargon} detail is design intent — the dimension is a suggestion."],
+    nuclear: ["Hi {name}! You authored {jargon} on the render — the field authored the RFI."],
+    nsfw: ["Hi {name}! Your {jargon} charrette was vibes — the punch list is evidence."],
+  },
 };
 
 function fillTemplate(template: string, name: string, hat: IndustryHat, seed: number): string {
@@ -112,24 +130,37 @@ export function getIndustryHatBurns(hatId: string, intensity: Intensity, name = 
   const out: string[] = [];
   const group = hat.hatGroup;
 
-  const mean = GROUP_MEAN[group];
+  if (hat.id === "architect") {
+    const short = GROUP_SHORT.architect?.[intensity] ?? [];
+    for (let i = 0; i < short.length; i++) {
+      out.push(fillTemplate(short[i], name, hat, seed + i));
+    }
+    if (intensity === "nsfw" || intensity === "nuclear") {
+      for (let i = 0; i < ARCHITECT_MEAN_LINES.length; i++) {
+        out.push(ARCHITECT_MEAN_LINES[i].replace(/\{name\}/g, name));
+      }
+    }
+    return out;
+  }
+
+  const meanKey =
+    hat.id === "bim_vdc_coordinator" ? "bim_vdc" : hat.id === "architect" ? "architect" : group;
+  const mean = GROUP_MEAN[meanKey] ?? GROUP_MEAN[group];
   if (mean?.length && (intensity === "nsfw" || intensity === "nuclear")) {
     for (let i = 0; i < mean.length; i++) {
       out.push(fillTemplate(mean[i], name, hat, seed + i));
     }
   }
 
-  const short = GROUP_SHORT[group]?.[intensity] ?? [];
+  const shortKey =
+    hat.id === "bim_vdc_coordinator" ? "bim_vdc" : hat.id === "architect" ? "architect" : group;
+  const short = GROUP_SHORT[shortKey]?.[intensity] ?? GROUP_SHORT[group]?.[intensity] ?? [];
   for (let i = 0; i < short.length; i++) {
     out.push(fillTemplate(short[i], name, hat, seed + i + 10));
   }
 
-  // Label-specific one-liner for every hat
   out.push(
-    `Hi {name}! You're a ${hat.label} — so of course your ${jargonSnippet(hat, seed + 99)} story is never boring.`.replace(
-      /\{name\}/g,
-      name,
-    ),
+    `Hi ${name}! You're a ${hat.label} — so of course your ${jargonSnippet(hat, seed + 99)} story is never boring.`,
   );
 
   return out;
@@ -143,11 +174,10 @@ export function formatIndustryContextForPrompt(hatId: string | undefined): strin
     ...dimensionalOutputsForHatGroup(hat.hatGroup).slice(0, 6),
   ].slice(0, 14);
   return [
-    `Industry role (hat): ${hat.label} [${hat.id} / ${hat.hatGroup}].`,
-    hat.description ? `Role context: ${hat.description}` : "",
-    `Weave in real jargon where natural: ${jargon.join(", ")}.`,
+    formatHatArchetypeBlock(hat),
+    `Jargon to weave in naturally: ${jargon.join(", ")}.`,
     `Doc focus: ${(hat.docClassFocus ?? []).join(", ")}.`,
   ]
     .filter(Boolean)
-    .join("\n");
+    .join("\n\n");
 }

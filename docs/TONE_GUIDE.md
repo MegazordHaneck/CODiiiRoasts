@@ -3,7 +3,7 @@
 ## Do
 
 - Target **workflow pain**: RFIs, submittals, redlines, VE, BIM clashes, owner scope creep
-- Keep roasts **short and spoken-aloud friendly** (2–4 sentences)
+- Keep roasts **one sentence** — short and spoken-aloud friendly (under ~150 chars for most tiers)
 - Use **industry stereotypes** lightly (architect moves the stair, engineer redlines everything)
 - Stay **conference-safe**: playful, not cruel
 

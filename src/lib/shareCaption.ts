@@ -1,5 +1,5 @@
 export const SHARE_HASHTAGS = "#CODiii #Roasted #AIA2026";
-export const SHARE_SITE_URL = "https://codiii.com";
+export const SHARE_SITE_URL = "https://codiii.com/roasts";
 
 /** Caption for social posts (image carries the visual; text complements it). */
 export function buildShareCaption(roast: string): string {

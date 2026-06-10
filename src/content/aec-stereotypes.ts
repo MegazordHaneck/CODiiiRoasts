@@ -1,4 +1,5 @@
 import type { Intensity } from "../types";
+import { ARCHITECT_ROAST_LINES } from "./industry/architectVariety";
 import type { RolePoolKey } from "./roast-pools";
 
 /**
@@ -52,29 +53,10 @@ export const AEC_STEREOTYPE_BURNS: {
   },
   byRole: {
     architect: {
-      light: [
-        "Hi {name}! Your render has people laughing on the roof — your section has no headroom.",
-        "Hi {name}! You named the project something like 'Horizon' or 'Nexus' — very black turtleneck.",
-        "Hi {name}! You visit site once for photos — the superintendent visits your inbox daily.",
-        "Hi {name}! Your parti diagram is a rectangle — your construction admin is a nightmare.",
-      ],
-      contractor: [
-        "Hi {name}! Your ceiling section shows 14 feet — MEP measured 9'2\" and cried.",
-        "Hi {name}! You detail the curtain wall like jewelry — the waterproofing like a rumor.",
-        "Hi {name}! Your stair sketch is Bauhaus — your stair built is OSHA fan fiction.",
-        "Hi {name}! You hide structure in the reflected ceiling plan — classic architect magic trick.",
-      ],
-      nuclear: [
-        "Hi {name}! You sell minimalism — your revision clouds are maximalist art.",
-        "Hi {name}! Your design intent slide deck is 40 pages — your dimension string is 'see model.'",
-        "Hi {name}! You want a floating stair — physics wants a conversation you won't attend.",
-        "Hi {name}! You're why the spec has 'architect shall review submittals' — nobody trusts the pretty drawing.",
-      ],
-      nsfw: [
-        "Hi {name}! You design like you're billing by square foot of unresolved detail.",
-        "Hi {name}! Your site visit outfit costs more than the temp fence — priorities.",
-        "Hi {name}! You call it 'design vision' — the ironworkers call it 'extra steel.'",
-      ],
+      light: ARCHITECT_ROAST_LINES.light,
+      contractor: ARCHITECT_ROAST_LINES.contractor,
+      nuclear: ARCHITECT_ROAST_LINES.nuclear,
+      nsfw: ARCHITECT_ROAST_LINES.nsfw,
     },
     engineer: {
       light: [

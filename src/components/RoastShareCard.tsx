@@ -58,34 +58,49 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
     ctx.fillRect(0, PHOTO_H - 80, W, 80);
 
     drawRoastedBadge(ctx);
+    drawCodiiiBrandPill(ctx);
 
     ctx.fillStyle = "#0a0a0a";
     ctx.fillRect(0, PHOTO_H, W, FOOTER_H);
+
+    const brandBar = ctx.createLinearGradient(0, PHOTO_H, W, PHOTO_H + 6);
+    brandBar.addColorStop(0, "#e97024");
+    brandBar.addColorStop(1, "#ff6b00");
+    ctx.fillStyle = brandBar;
+    ctx.fillRect(0, PHOTO_H, W, 6);
 
     ctx.strokeStyle = "#e97024";
     ctx.lineWidth = 2;
     ctx.strokeRect(12, 12, W - 24, H - 24);
 
+    ctx.fillStyle = "#9ca3af";
+    ctx.font = "600 11px Inter, sans-serif";
+    ctx.fillText("ROASTED BY", 28, PHOTO_H + 36);
+
     ctx.fillStyle = "#e97024";
-    ctx.font = "bold 22px Inter, sans-serif";
-    ctx.fillText("I just got Roasted by CODiii", 28, PHOTO_H + 44);
+    ctx.font = "bold 36px Inter, sans-serif";
+    ctx.fillText("CODiii", 28, PHOTO_H + 72);
+
+    ctx.fillStyle = "#d1d5db";
+    ctx.font = "600 13px Inter, sans-serif";
+    ctx.fillText("I just got roasted 🔥", 28, PHOTO_H + 94);
 
     ctx.fillStyle = "#9ca3af";
     ctx.font = "13px Inter, sans-serif";
-    ctx.fillText(name, 28, PHOTO_H + 68);
+    ctx.fillText(name, 28, PHOTO_H + 116);
 
     ctx.fillStyle = "#f3f4f6";
     ctx.font = "italic 16px Inter, sans-serif";
     const quoted = roast.trim().startsWith('"') ? roast.trim() : `"${roast.trim()}"`;
-    wrapText(ctx, quoted, 28, PHOTO_H + 96, W - 56, 22);
+    wrapText(ctx, quoted, 28, PHOTO_H + 142, W - 56, 22);
 
     ctx.fillStyle = "#e97024";
     ctx.font = "600 13px Inter, sans-serif";
     ctx.fillText(SHARE_HASHTAGS, 28, H - 52);
 
-    ctx.fillStyle = "#6b7280";
-    ctx.font = "12px Inter, sans-serif";
-    ctx.fillText("codiii.com", 28, H - 28);
+    ctx.fillStyle = "#e97024";
+    ctx.font = "bold 13px Inter, sans-serif";
+    ctx.fillText("codiii.com/roasts", 28, H - 28);
 
     if (qrUrl) {
       const qrCanvas = document.createElement("canvas");
@@ -131,7 +146,7 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
 
 function drawRoastedBadge(ctx: CanvasRenderingContext2D) {
   const cx = 88;
-  const cy = 48;
+  const cy = 52;
   const angle = (-9 * Math.PI) / 180;
 
   ctx.save();
@@ -141,7 +156,7 @@ function drawRoastedBadge(ctx: CanvasRenderingContext2D) {
   drawBadgeFlames(ctx);
 
   const bw = 172;
-  const bh = 54;
+  const bh = 62;
   ctx.shadowColor = "rgba(255, 85, 0, 0.85)";
   ctx.shadowBlur = 18;
   ctx.fillStyle = "#e97024";
@@ -155,12 +170,41 @@ function drawRoastedBadge(ctx: CanvasRenderingContext2D) {
   ctx.stroke();
 
   ctx.fillStyle = "#0a0a0a";
-  ctx.font = "bold 32px Inter, sans-serif";
+  ctx.font = "bold 28px Inter, sans-serif";
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
-  ctx.fillText("ROASTED", 0, 1);
+  ctx.fillText("ROASTED", 0, -6);
+
+  ctx.font = "bold 11px Inter, sans-serif";
+  ctx.fillText("BY CODiii", 0, 14);
 
   ctx.restore();
+}
+
+function drawCodiiiBrandPill(ctx: CanvasRenderingContext2D) {
+  const label = "CODiii";
+  ctx.font = "bold 22px Inter, sans-serif";
+  const tw = ctx.measureText(label).width;
+  const padX = 14;
+  const pillW = tw + padX * 2;
+  const pillH = 36;
+  const x = W - pillW - 18;
+  const y = PHOTO_H - pillH - 18;
+
+  ctx.shadowColor = "rgba(233, 112, 36, 0.6)";
+  ctx.shadowBlur = 12;
+  ctx.fillStyle = "#e97024";
+  ctx.beginPath();
+  ctx.roundRect(x, y, pillW, pillH, 8);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  ctx.fillStyle = "#0a0a0a";
+  ctx.textAlign = "left";
+  ctx.textBaseline = "middle";
+  ctx.fillText(label, x + padX, y + pillH / 2 + 1);
+  ctx.textAlign = "left";
+  ctx.textBaseline = "alphabetic";
 }
 
 function drawBadgeFlames(ctx: CanvasRenderingContext2D) {
@@ -220,7 +264,7 @@ function wrapText(
   const words = text.split(" ");
   let line = "";
   let cy = y;
-  const maxLines = 5;
+  const maxLines = 3;
   let lines = 0;
 
   for (const word of words) {

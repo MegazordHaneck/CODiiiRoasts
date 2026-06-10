@@ -28,7 +28,7 @@ export function WebcamCapture({ photoUrl, onCapture, compact = false }: Props) {
   const ensureStream = useCallback(async () => {
     if (streamRef.current) return streamRef.current;
     const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+      video: { facingMode: "user", width: { ideal: 1920 }, height: { ideal: 1440 } },
       audio: false,
     });
     streamRef.current = stream;

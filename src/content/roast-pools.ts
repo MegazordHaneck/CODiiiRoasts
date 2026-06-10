@@ -1,4 +1,5 @@
 import type { Intensity } from "../types";
+import { ARCHITECT_ROAST_LINES } from "./industry/architectVariety";
 import { getBurnExtensions } from "./burn-extensions";
 
 export type RolePoolKey =
@@ -104,26 +105,10 @@ const UNIVERSAL: Record<Intensity, string[]> = {
 
 const ROLE_POOLS: Record<RolePoolKey, Partial<Record<Intensity, string[]>>> = {
   architect: {
-    light: [
-      "Hi {name}! 'Final' is your favorite suggestion.",
-      "Hi {name}! Minimalism is your aesthetic — revisions are your hobby.",
-      "Hi {name}! Your stair details have more plot twists than HBO.",
-    ],
-    contractor: [
-      "Hi {name}! The stair moved again — the field felt it spiritually.",
-      "Hi {name}! Your design intent is clear — the dimensions are optional.",
-      "Hi {name}! You sketch beauty — someone else owns constructability.",
-    ],
-    nuclear: [
-      "Hi {name}! Fourteen stair revisions and you still call it minimal.",
-      "Hi {name}! Your sheet index is a novel — the building is a footnote.",
-      "Hi {name}! You don't value engineer — you value surprise everyone.",
-      "Hi {name}! Your renderings are flawless — your details are fan fiction.",
-      "Hi {name}! You treat door swings like a philosophical debate.",
-      "Hi {name}! Your ceiling plan is where hope goes to die.",
-      "Hi {name}! You design landmarks — the budget designs reality checks.",
-      "Hi {name}! Your revision cloud is basically weather on the sheet.",
-    ],
+    light: ARCHITECT_ROAST_LINES.light,
+    contractor: ARCHITECT_ROAST_LINES.contractor,
+    nuclear: ARCHITECT_ROAST_LINES.nuclear,
+    nsfw: ARCHITECT_ROAST_LINES.nsfw,
   },
   engineer: {
     light: [

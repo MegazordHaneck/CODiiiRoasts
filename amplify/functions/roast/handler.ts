@@ -12,7 +12,7 @@ import {
 
 const FALLBACK: RoastResponse = {
   roast:
-    "You work in AEC — so your calendar is RFIs, your model is lying, and the superintendent has a nickname for you.",
+    "Your calendar is RFIs, your model is lying, and the superintendent definitely has a nickname for you.",
   violations: [
     "Detected: offline fallback mode",
     "Warning: design-bid-blame levels critical",
@@ -34,8 +34,8 @@ const ANGLES = [
   "AHJ / permit / entitlement final boss.",
   "Friday 4:58 transmittal or IFC drop.",
   "Company name + discipline cliché together.",
-  "If nuclear: two tropes, blunt punchline.",
-  "If mean mode: 3-4 sentence vulgar prose — revision clouds, coordination WTF meeting, detail section punchline.",
+  "If nuclear: one trope, one blunt punchline — single sentence.",
+  "If mean mode: one vulgar sentence — coordination meeting or detail section energy.",
   "Vary opener — not always 'that explains why'.",
 ];
 
@@ -53,7 +53,7 @@ Name: ${body.name}
 ${body.company ? `Company: ${body.company}` : ""}
 Profession / discipline (use as a real job title — never "a designs X"): ${body.role}
 ${body.introTranscript ? `\nExact words they said to CODiii:\n"${body.introTranscript}"\n\nYou MUST roast their actual work ontology (skyscrapers, bridges, BIM, GC, etc.) and company if stated. Use profession nouns (architect, superintendent) — never verb phrases like "designs skyscrapers" as their job title.` : ""}
-${body.industryContext ? `\n${body.industryContext}\nUse their trade/discipline jargon naturally — spot elevation, invert, RFIs, submittals, etc.` : ""}
+${body.industryContext ? `\n${body.industryContext}\n\nROLE FIDELITY: The roast must target THIS hat's actual work (GRILL THEM ON). Never use tropes from the DO NOT list. One sentence. Use their jargon only where it fits this role.` : ""}
 Intensity: ${body.intensity}
 Creative angle for THIS roast only: ${angle}
 ${exclude.length ? `\nBANNED — do not repeat or paraphrase:\n${exclude.map((r) => `- ${r}`).join("\n")}` : ""}
@@ -61,8 +61,8 @@ ${exclude.length ? `\nBANNED — do not repeat or paraphrase:\n${exclude.map((r)
 Be specific to their intro. If intensity is nuclear, bring real heat.
 ${
   body.intensity === "nsfw"
-    ? `\nMEAN MODE — match vulgar multi-sentence AEC prose (revision clouds / coordination meetings / detail sections energy). Profanity OK. Not sexual. Up to ~550 chars.`
-    : ""
+    ? `\nMEAN MODE — one vulgar sentence only (coordination meeting / detail section energy). Profanity OK. Not sexual. Under 200 chars.`
+    : `\nONE sentence only — no setup paragraph, no "And your…" second beat.`
 }`;
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {

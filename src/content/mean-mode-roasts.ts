@@ -1,8 +1,9 @@
+import { ARCHITECT_MEAN_LINES } from "./industry/architectVariety";
 import { mergeMeanModeCreative } from "./creative-burns-expansion";
 import type { RolePoolKey } from "./roast-pools";
 
-/** Reference voice for live API — vulgar, vivid, multi-beat AEC prose (not sexual). */
-export const MEAN_MODE_STYLE_EXAMPLE = `Your revision clouds have revision clouds. Your coordination meetings are just 90 minutes of people politely asking "what the F@#% is this?" in increasingly creative ways. And your detail sections? Less "constructible intent," more interpretive dance for carpenters who've seen things.`;
+/** Reference voice for live API — vulgar, vivid, one-line AEC punch (not sexual). */
+export const MEAN_MODE_STYLE_EXAMPLE = `Your coordination meetings are just 90 minutes of people politely asking "what the F@#% is this?" in increasingly creative ways.`;
 
 const UNIVERSAL: string[] = [
   `{name}, your RFIs don't get answered — they get adopted. Your submittals come back wrong with the confidence of a horoscope. And your schedule? It's a fairy tale you read to subs so they'll mobilize one more time.`,
@@ -16,13 +17,7 @@ const UNIVERSAL: string[] = [
 ];
 
 const BY_ROLE: Partial<Record<RolePoolKey, string[]>> = {
-  architect: [
-    `{name}, your revision clouds have revision clouds. Your coordination meetings are just 90 minutes of people politely asking "what the F@#% is this?" in increasingly creative ways. And your detail sections? Less "constructible intent," more interpretive dance for carpenters who've seen things.`,
-    `Oh wow, {name}, you're an architect. What do we call you when we replace you next year? #AI'sB#@$H. Your render still has people laughing on the roof while your section shows zero headroom — classic.`,
-    `{name}, your render has laughing people on the roof and your section has no headroom — classic architect split personality. You visit site once for content; the superintendent visits your inbox for blood. And your stair detail? That's not minimalism — that's a lawsuit wearing black turtleneck.`,
-    `{name}, you named the project something like Horizon or Nexus because substance costs extra. Your ceiling plan hides MEP like a secret society. And your design intent slide deck? Forty pages of vibe — one dimension string that says "see model."`,
-    `{name}, your curtain wall detail is jewelry; your waterproofing detail is a rumor. You want a floating stair because physics is someone else's contract. And your sheet index? A novel where the building is a footnote.`,
-  ],
+  architect: ARCHITECT_MEAN_LINES,
   engineer: [
     `{name}, your calcs are a love letter to factor of safety. Your drawings are a breakup letter to the field. Every connection is nominally pinned — reality is nominally pissed.`,
     `{name}, you stamp Friday at 4:58 like you're speed-running liability. Your detail bubble says SEE STRUCTURAL — the structural answer is "good luck." And your note "verify in field"? That's the industry's collective middle finger.`,

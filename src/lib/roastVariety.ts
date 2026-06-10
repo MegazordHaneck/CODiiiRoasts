@@ -275,7 +275,7 @@ export const CREATIVE_ANGLES = [
   "AHJ / permit / entitlement final boss.",
   "Friday 4:58 transmittal damage.",
   "Company name + discipline cliché in one punch.",
-  "If nuclear: two tropes, one brutal line.",
-  "If mean mode: 3-4 sentence vulgar prose — revision clouds / coordination meeting / detail section beats.",
+  "If nuclear: one trope, one brutal line — single sentence.",
+  "If mean mode: one vulgar sentence — coordination meeting or detail section punchline.",
   "No generic workflow chaos — insider AEC only.",
 ];

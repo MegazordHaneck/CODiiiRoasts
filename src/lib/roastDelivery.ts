@@ -2,6 +2,13 @@ import type { Intensity } from "../types";
 import { parseIntro } from "./parseIntro";
 import { isVerbPhraseRole, professionFromDesignWork, cleanAttendeeName } from "./rolePhrase";
 
+const MAX_ROAST_CHARS: Record<Intensity, number> = {
+  light: 120,
+  contractor: 150,
+  nuclear: 180,
+  nsfw: 200,
+};
+
 export type RoastDeliveryContext = {
   name: string;
   role: string;
@@ -79,8 +86,32 @@ export function normalizeRoastDelivery(roast: string, ctx: RoastDeliveryContext)
   }
 
   text = ensureSpeakableOpener(text, facts);
+  text = clampToOneSentence(text, ctx.intensity);
 
   return text.trim();
+}
+
+/** Keep roasts to a single speakable line — trims API/fallback ramble. */
+export function clampToOneSentence(text: string, intensity: Intensity = "contractor"): string {
+  let t = text.trim();
+  if (!t) return t;
+
+  if (t.startsWith('"') && t.endsWith('"')) t = t.slice(1, -1).trim();
+
+  const sentenceEnd = t.search(/[.!?](?:\s|$|")/);
+  if (sentenceEnd >= 0) {
+    t = t.slice(0, sentenceEnd + 1).trim();
+  }
+
+  const max = MAX_ROAST_CHARS[intensity];
+  if (t.length > max) {
+    const cut = t.slice(0, max - 1);
+    const lastSpace = cut.lastIndexOf(" ");
+    t = `${(lastSpace > 40 ? cut.slice(0, lastSpace) : cut).trim()}…`;
+    if (!/[.!?]$/.test(t)) t += ".";
+  }
+
+  return t;
 }
 
 function escapeRe(s: string): string {
@@ -103,14 +134,14 @@ function softenProfanityForIntensity(text: string): string {
 }
 
 function ensureSpeakableOpener(text: string, facts: AttendeeFacts): string {
+  const firstName = facts.name.split(/\s+/)[0] ?? facts.name;
   const lower = text.toLowerCase();
-  const nameOk = lower.includes(facts.name.toLowerCase().split(" ")[0]);
-  if (nameOk) return text;
-
-  if (facts.company) {
-    return `${facts.name}, ${facts.role} at ${facts.company} — ${text.charAt(0).toLowerCase()}${text.slice(1)}`;
+  if (lower.includes(firstName.toLowerCase()) || lower.includes(facts.name.toLowerCase())) {
+    return text;
   }
-  return `${facts.name}, ${facts.role} — ${text.charAt(0).toLowerCase()}${text.slice(1)}`;
+
+  const rest = text.charAt(0).toLowerCase() + text.slice(1);
+  return `${facts.name}, ${rest}`;
 }
 
 /** Quick sanity flags for admin/debug — not used to regenerate. */

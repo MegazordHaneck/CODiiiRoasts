@@ -1,6 +1,6 @@
 import type { Intensity, RoastResult } from "../types";
-import { formatIndustryContextForPrompt } from "../content/industry/hatBurns";
-import { getIndustryHatBurns } from "../content/industry/hatBurns";
+import { formatIndustryContextForPrompt, getIndustryHatBurns } from "../content/industry/hatBurns";
+import { getRoastAnglesForHat } from "../content/industry/hatArchetypes";
 import { pickMeanModeRoast } from "../content/mean-mode-roasts";
 import { getTemplatePool, type RolePoolKey } from "../content/roast-pools";
 import { resolveRolePoolKey, parseIntro } from "./parseIntro";
@@ -191,13 +191,16 @@ export async function fetchRoast(input: {
       );
     }
 
+    const hatAngles = getRoastAnglesForHat(input.industryHatId);
+    const anglePool = hatAngles.length > 0 ? hatAngles : CREATIVE_ANGLES;
+
     const tried: string[] = [];
     for (let attempt = 0; attempt < 8; attempt++) {
       const data = finalizeRoast(
         await requestRoast(url, {
           ...input,
           excludeRoasts: [...excludeRoasts, ...tried],
-          variationHint: CREATIVE_ANGLES[(attempt + input.name.length) % CREATIVE_ANGLES.length],
+          variationHint: anglePool[(attempt + input.name.length) % anglePool.length],
         }),
         delivery,
       );

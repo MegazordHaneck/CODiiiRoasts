@@ -1,4 +1,5 @@
 import type { Intensity } from "../types";
+import { ARCHITECT_MEAN_LINES, ARCHITECT_ROAST_LINES } from "./industry/architectVariety";
 import type { RolePoolKey } from "./roast-pools";
 
 /** Long-form mean mode — vivid, 3-beat, share-safe profanity */
@@ -30,18 +31,7 @@ export const MEAN_MODE_CREATIVE: {
     `{name}, you treat the AHJ like a surprise villain every time. Your utility coordination is a phone tree of despair. And your as-constructed photos? Evidence.`,
   ],
   byRole: {
-    architect: [
-      `{name}, your schematic is a vibe — your construction set is a war. You hide MEP in the ceiling like a smuggler. And your door hardware schedule? A rumor with aspirations.`,
-      `{name}, you want "timeless architecture" — the trades want a dimension that works. Your site photo has golden hour; your section has zero headroom. And your waterproofing detail? A ghost.`,
-      `{name}, your facade detail is museum quality — your back-of-house is where souls go missing. You named the building something Latin. And the superintendent named you something not printable — we censored it.`,
-      `{name}, your design narrative is poetry — your dimension strings are "see model" like that's a personality. You love a reveal; the framer loves a wall that exists. And your RFI answers? Haiku that hurts.`,
-      `{name}, you're why "design intent" is a phrase people say through gritted teeth. Your reflected ceiling plan is a magic trick — structure vanished. And your value engineering? You VE'd the part that kept water out.`,
-      `{name}, your render shows happy humans on the roof — your life safety plan shows them trapped. You visit site once for content. And the ironworkers visit your details for revenge.`,
-      `{name}, your black turtleneck energy is strong — your flashing detail energy is missing. You want a cantilever because gravity is a suggestion. And your revision cloud? Weather on the sheet — emotional damage on the job.`,
-      `{name}, your curtain wall meeting is glass, hope, and leakage. Your stair is sculptural — the handrail is theoretical. And when they replace you with AI? They'll call it #AI'sB#@$H and mean it lovingly.`,
-      `{name}, your ceiling plan is where MEP goes to fight for air. Your wall section is two lines and a prayer. And your constructability review? You scheduled it — you didn't attend it.`,
-      `{name}, you sell "clarity of vision" — you deliver a scavenger hunt in PDF. Your door swing conflicts with reality. And your punch list comments? "Accept as design intent" — the industry's middle finger.`,
-    ],
+    architect: ARCHITECT_MEAN_LINES,
     engineer: [
       `{name}, your calcs are church — your details are fan fiction. You love a pin connection like it's a hobby. And your note "by others" is the coward's flourish.`,
       `{name}, you stamp it like you're closing a bar tab — Monday inherits physics. Your detail 3/S-501 says SEE STRUCTURAL — the structural answer is "good luck, king."`,
@@ -150,19 +140,10 @@ export const STEREOTYPE_CREATIVE: {
   },
   byRole: {
     architect: {
-      light: [
-        "Hi {name}! Your material board is chef's kiss — your flashing detail is missing.",
-        "Hi {name}! You love a cantilever — physics sends its regards.",
-      ],
-      contractor: [
-        "Hi {name}! Your ceiling height on paper is a joke MEP didn't laugh at.",
-        "Hi {name}! Your door swing diagram is a philosophical debate.",
-      ],
-      nuclear: [
-        "Hi {name}! Your revision cloud is weather — the budget is a hurricane.",
-        "Hi {name}! You want minimalism — the trades want a dimension.",
-        "Hi {name}! Your render is lying — the section is confessing.",
-      ],
+      light: ARCHITECT_ROAST_LINES.light,
+      contractor: ARCHITECT_ROAST_LINES.contractor,
+      nuclear: ARCHITECT_ROAST_LINES.nuclear,
+      nsfw: ARCHITECT_ROAST_LINES.nsfw,
     },
     engineer: {
       light: [
