@@ -45,7 +45,9 @@ The Vite build picks this up automatically. For local dev, copy URLs to `.env.lo
 ```
 VITE_ROAST_URL=
 VITE_SPEAK_URL=
-VITE_ADMIN_PIN=1234
+VITE_NSFW_PIN=1818
+# Optional separate /admin PIN — if omitted, /admin uses VITE_NSFW_PIN
+# VITE_ADMIN_PIN=1234
 ```
 
 ## 5. Booth day

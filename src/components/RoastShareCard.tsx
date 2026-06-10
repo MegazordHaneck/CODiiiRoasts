@@ -19,9 +19,18 @@ type Props = {
 
 const W = 540;
 const PHOTO_H = 340;
-const FOOTER_H = 280;
-const H = PHOTO_H + FOOTER_H;
+const FOOTER_MIN_H = 280;
+/** Footer offset from photo bottom to roast text baseline. */
+const FOOTER_ROAST_TOP = 142;
+/** Space reserved below roast for hashtags, URL, and QR. */
+const FOOTER_BOTTOM_H = 96;
 const CODIII_LAUGH_ICON = "/brand/codiii-laugh-icon.png";
+
+const ROAST_TYPOGRAPHY = [
+  { font: "italic 16px Inter, sans-serif", lineHeight: 22, shrinkAbove: 5 },
+  { font: "italic 14px Inter, sans-serif", lineHeight: 20, shrinkAbove: 8 },
+  { font: "italic 13px Inter, sans-serif", lineHeight: 18, shrinkAbove: Infinity },
+] as const;
 
 export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function RoastShareCard(
   { name, roast, photoUrl, qrUrl, compact = false, booth = false },
@@ -36,8 +45,14 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
+    const roastMaxWidth = qrUrl ? W - 120 : W - 56;
+    const quoted = roast.trim().startsWith('"') ? roast.trim() : `"${roast.trim()}"`;
+    const roastLayout = layoutRoastBlock(ctx, quoted, roastMaxWidth);
+    const footerH = Math.max(FOOTER_MIN_H, FOOTER_ROAST_TOP + roastLayout.height + FOOTER_BOTTOM_H);
+    const h = PHOTO_H + footerH;
+
     canvas.width = W;
-    canvas.height = H;
+    canvas.height = h;
 
     if (photoUrl) {
       const img = await loadImage(photoUrl);
@@ -67,7 +82,7 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
     }
 
     ctx.fillStyle = "#0a0a0a";
-    ctx.fillRect(0, PHOTO_H, W, FOOTER_H);
+    ctx.fillRect(0, PHOTO_H, W, footerH);
 
     const brandBar = ctx.createLinearGradient(0, PHOTO_H, W, PHOTO_H + 6);
     brandBar.addColorStop(0, "#e97024");
@@ -77,7 +92,7 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
 
     ctx.strokeStyle = "#e97024";
     ctx.lineWidth = 2;
-    ctx.strokeRect(12, 12, W - 24, H - 24);
+    ctx.strokeRect(12, 12, W - 24, h - 24);
 
     ctx.fillStyle = "#9ca3af";
     ctx.font = "600 11px Inter, sans-serif";
@@ -96,17 +111,16 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
     ctx.fillText(name, 28, PHOTO_H + 116);
 
     ctx.fillStyle = "#f3f4f6";
-    ctx.font = "italic 16px Inter, sans-serif";
-    const quoted = roast.trim().startsWith('"') ? roast.trim() : `"${roast.trim()}"`;
-    wrapText(ctx, quoted, 28, PHOTO_H + 142, W - 56, 22);
+    ctx.font = roastLayout.font;
+    drawRoastLines(ctx, roastLayout.lines, 28, PHOTO_H + FOOTER_ROAST_TOP, roastLayout.lineHeight);
 
     ctx.fillStyle = "#e97024";
     ctx.font = "600 13px Inter, sans-serif";
-    ctx.fillText(SHARE_HASHTAGS, 28, H - 52);
+    ctx.fillText(SHARE_HASHTAGS, 28, h - 52);
 
     ctx.fillStyle = "#e97024";
     ctx.font = "bold 13px Inter, sans-serif";
-    ctx.fillText("codiii.com/roasts", 28, H - 28);
+    ctx.fillText("codiii.com/roasts", 28, h - 28);
 
     if (qrUrl) {
       const qrCanvas = document.createElement("canvas");
@@ -115,7 +129,7 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
         margin: 1,
         color: { dark: "#e97024", light: "#00000000" },
       });
-      ctx.drawImage(qrCanvas, W - 88, H - 88, 64, 64);
+      ctx.drawImage(qrCanvas, W - 88, h - 88, 64, 64);
     }
   }, [name, roast, photoUrl, qrUrl]);
 
@@ -274,34 +288,77 @@ function drawCover(
   ctx.drawImage(img, sx, sy, sw, sh);
 }
 
-function wrapText(
+type RoastLayout = {
+  font: string;
+  lineHeight: number;
+  lines: string[];
+  height: number;
+};
+
+function layoutRoastBlock(
   ctx: CanvasRenderingContext2D,
   text: string,
-  x: number,
-  y: number,
   maxWidth: number,
-  lineHeight: number,
-) {
-  const words = text.split(" ");
+): RoastLayout {
+  for (let i = 0; i < ROAST_TYPOGRAPHY.length; i++) {
+    const spec = ROAST_TYPOGRAPHY[i];
+    ctx.font = spec.font;
+    const lines = breakIntoLines(ctx, text, maxWidth);
+    const isLast = i === ROAST_TYPOGRAPHY.length - 1;
+    if (lines.length <= spec.shrinkAbove || isLast) {
+      return {
+        font: spec.font,
+        lineHeight: spec.lineHeight,
+        lines,
+        height: lines.length * spec.lineHeight,
+      };
+    }
+  }
+
+  const fallback = ROAST_TYPOGRAPHY[ROAST_TYPOGRAPHY.length - 1];
+  ctx.font = fallback.font;
+  const lines = breakIntoLines(ctx, text, maxWidth);
+  return {
+    font: fallback.font,
+    lineHeight: fallback.lineHeight,
+    lines,
+    height: lines.length * fallback.lineHeight,
+  };
+}
+
+function breakIntoLines(
+  ctx: CanvasRenderingContext2D,
+  text: string,
+  maxWidth: number,
+): string[] {
+  const words = text.split(/\s+/).filter(Boolean);
+  const lines: string[] = [];
   let line = "";
-  let cy = y;
-  const maxLines = 3;
-  let lines = 0;
 
   for (const word of words) {
-    const test = `${line}${word} `;
+    const test = line ? `${line} ${word}` : word;
     if (ctx.measureText(test).width > maxWidth && line) {
-      ctx.fillText(line.trim(), x, cy);
-      line = `${word} `;
-      cy += lineHeight;
-      lines += 1;
-      if (lines >= maxLines) {
-        ctx.fillText(`${line.trim()}…`, x, cy);
-        return;
-      }
+      lines.push(line);
+      line = word;
     } else {
       line = test;
     }
   }
-  if (line.trim()) ctx.fillText(line.trim(), x, cy);
+
+  if (line) lines.push(line);
+  return lines.length > 0 ? lines : [text];
+}
+
+function drawRoastLines(
+  ctx: CanvasRenderingContext2D,
+  lines: string[],
+  x: number,
+  y: number,
+  lineHeight: number,
+) {
+  let cy = y;
+  for (const line of lines) {
+    ctx.fillText(line, x, cy);
+    cy += lineHeight;
+  }
 }

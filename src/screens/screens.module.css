@@ -135,6 +135,12 @@
   font-size: 1.05rem;
 }
 
+.pinError {
+  margin: -0.35rem 0 0;
+  font-size: 0.9rem;
+  color: #f87171;
+}
+
 .roastLead {
   margin: 0;
   font-size: 0.85rem;
