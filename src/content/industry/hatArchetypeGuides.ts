@@ -1,5 +1,14 @@
 import type { HatArchetypeGuide } from "./hatArchetypes";
 import { ARCHITECT_ANGLES, ARCHITECT_AVOID, ARCHITECT_GRILL_ON } from "./architectVariety";
+import { BIM_ANGLES, BIM_AVOID, BIM_GRILL_ON } from "./bimVariety";
+import { MEP_ANGLES, MEP_AVOID, MEP_GRILL_ON } from "./mepVariety";
+import { PM_ANGLES, PM_AVOID, PM_GRILL_ON } from "./pmVariety";
+import { STRUCTURAL_ANGLES, STRUCTURAL_AVOID, STRUCTURAL_GRILL_ON } from "./structuralVariety";
+import {
+  SUPERINTENDENT_ANGLES,
+  SUPERINTENDENT_AVOID,
+  SUPERINTENDENT_GRILL_ON,
+} from "./superintendentVariety";
 
 /** Complete role-fidelity guides for every AECOHats.mjs profession. */
 export const HAT_ARCHETYPE_GUIDES: Record<string, HatArchetypeGuide> = {
@@ -270,27 +279,9 @@ export const HAT_ARCHETYPE_GUIDES: Record<string, HatArchetypeGuide> = {
   // ─── Engineering consultants ──────────────────────────────────────────────
   structural_engineer: {
     archetype: "Structural engineer — members, loads, foundations, lateral system, connections, stamped calcs.",
-    grillOn: [
-      "SEE STRUCTURAL bubbles everywhere",
-      "connection details deferred to steel detailer",
-      "stamp Friday 4:58 transmittal energy",
-      "calcs package vs sheet detail fiction",
-      "verify-in-field as entire personality",
-      "load path clear in heart — missing on PDF",
-      "pin connection religion vs field buildability",
-    ],
-    avoid: [
-      "pretty render people on roof (architect)",
-      "Navisworks clash naming comedy (BIM)",
-      "owner VE smile deleting facade",
-      "superintendent toolbox talk",
-      "Division 08 door hardware",
-    ],
-    angles: [
-      "Calcs are church — sheet is fan fiction.",
-      "Friday stamp — Monday inherits deflection.",
-      "Pin connection nominally pinned — field nominally pissed.",
-    ],
+    grillOn: STRUCTURAL_GRILL_ON,
+    avoid: STRUCTURAL_AVOID,
+    angles: STRUCTURAL_ANGLES,
   },
   civil_engineer: {
     archetype: "Civil engineer — grading, drainage, utilities, paving, erosion control, site design.",
@@ -386,26 +377,9 @@ export const HAT_ARCHETYPE_GUIDES: Record<string, HatArchetypeGuide> = {
   },
   mechanical_engineer: {
     archetype: "Mechanical engineer (design) — HVAC loads, equipment selection, duct/pipe sizing, energy calcs.",
-    grillOn: [
-      "plenum war lost on paper before field",
-      "equipment schedule vs ceiling height lie",
-      "duct sizing vs architect aesthetic soffit",
-      "load calc assumptions vs actual envelope",
-      "coordination with electrical panel room size",
-      "energy model inputs vs value engineering massacre",
-    ],
-    avoid: [
-      "field TAB balancing report (TAB contractor)",
-      "superintendent hammer jokes",
-      "AHJ permit wall as their daily job",
-      "concrete pour flatness",
-      "landscape irrigation install",
-    ],
-    angles: [
-      "Plenum war — you drew the casualties.",
-      "Equipment fits — ceiling height was a suggestion.",
-      "Load calc assumptions — VE deleted half of them.",
-    ],
+    grillOn: MEP_GRILL_ON,
+    avoid: MEP_AVOID,
+    angles: MEP_ANGLES,
   },
   electrical_engineer: {
     archetype: "Electrical engineer (design) — service, distribution, fault current, lighting, load calcs, one-lines.",
@@ -595,26 +569,9 @@ export const HAT_ARCHETYPE_GUIDES: Record<string, HatArchetypeGuide> = {
   },
   owners_project_manager: {
     archetype: "Owner's PM — client-side schedule, budget, design team wrangling, vendor coordination.",
-    grillOn: [
-      "design team blame upstream",
-      "budget vs program wish list spreadsheet",
-      "approval bottlenecks you facilitate",
-      "change review meeting proliferation",
-      "vendor coordination vs single point of failure (you)",
-      "owner directive translation failures",
-    ],
-    avoid: [
-      "field toolbox talks",
-      "duct rough-in fights",
-      "structural stamp Friday",
-      "sprinkler head install",
-      "Navisworks clash matrix",
-    ],
-    angles: [
-      "Stakeholder aligned — in the meeting invite only.",
-      "Change review — review of reviews.",
-      "Budget spreadsheet green — reality amber.",
-    ],
+    grillOn: PM_GRILL_ON,
+    avoid: PM_AVOID,
+    angles: PM_ANGLES,
   },
   lender_inspector: {
     archetype: "Lender / third-party reviewer — progress verification, quality review, draw support documentation.",
@@ -831,49 +788,15 @@ export const HAT_ARCHETYPE_GUIDES: Record<string, HatArchetypeGuide> = {
   // ─── GC / field ───────────────────────────────────────────────────────────
   construction_manager: {
     archetype: "Construction manager / PM — overall delivery, RFIs, coordination, cost/time, meetings.",
-    grillOn: [
-      "meeting breeds meeting",
-      "Gantt astrology",
-      "RAID log screams DESIGN",
-      "blame matrix facilitation",
-      "RFI backlog management theater",
-      "recovery narrative with catering",
-    ],
-    avoid: [
-      "clash naming as primary job (BIM)",
-      "pretty render aesthetics (architect)",
-      "stamping structural calcs",
-      "writing 400-page spec",
-      "sprinkler head layout design",
-    ],
-    angles: [
-      "Meetings about meetings — structural irony.",
-      "Gantt green — field red.",
-      "RAID log: screaming in columns, professionally.",
-    ],
+    grillOn: PM_GRILL_ON,
+    avoid: PM_AVOID,
+    angles: PM_ANGLES,
   },
   superintendent: {
     archetype: "Superintendent / general foreman — daily sequence, trade access, logistics, field production.",
-    grillOn: [
-      "daily report: waiting on design",
-      "RFI lifestyle and photo attachments",
-      "trade coordination in mud",
-      "schedule vs weather plot twists",
-      "toolbox talk passive aggression",
-      "sequence plan vs design radius change",
-    ],
-    avoid: [
-      "Navisworks LOD slides",
-      "stamping structural calcs",
-      "owner lender TPR report",
-      "LEED credit forms",
-      "writing MasterFormat specs",
-    ],
-    angles: [
-      "Daily report religion: waiting on design.",
-      "RFI photo — sheet A-101 still wrong.",
-      "Sequence plan — weather had other plans.",
-    ],
+    grillOn: SUPERINTENDENT_GRILL_ON,
+    avoid: SUPERINTENDENT_AVOID,
+    angles: SUPERINTENDENT_ANGLES,
   },
   site_safety: {
     archetype: "Site safety — fall protection, access, hot work, logistics hazards, OSHA compliance.",
@@ -947,32 +870,9 @@ export const HAT_ARCHETYPE_GUIDES: Record<string, HatArchetypeGuide> = {
   bim_vdc_coordinator: {
     archetype:
       "BIM/VDC coordinator — federates trade models, runs clashes, tracks issues, enforces standards. Does NOT design buildings or run the job site.",
-    grillOn: [
-      "federated model divorce",
-      "LOD slide deck vs model reality",
-      "Navisworks clash theater and issue ping-pong",
-      "BEP promises vs delivery fiction",
-      "Copy of Copy of Revit families",
-      "closing clashes without fixing roots",
-      "model delivery deadlines vs trade participation",
-      "issue tracker as coordination substitute",
-    ],
-    avoid: [
-      "pretty renderings and architect aesthetic minimalism",
-      "submittal revision clouds as THEIR design deliverable",
-      "superintendent field visits and hammer jokes",
-      "stamping drawings or writing Division specs",
-      "owner budget delusion and VE smiles",
-      "MEP duct sizing as engineer of record",
-      "GC float and recovery speech fiction",
-    ],
-    angles: [
-      "LOD 500 on deck, LOD 200 in ceiling.",
-      "Clash report: 9,000 issues, three closed — coordination!",
-      "BEP promised peace — clash matrix promised overtime.",
-      "Federated model: divorce with shared custody of ghosts.",
-      "You timestamp chaos in 3D — call it VDC.",
-    ],
+    grillOn: BIM_GRILL_ON,
+    avoid: BIM_AVOID,
+    angles: BIM_ANGLES,
   },
 
   // ─── Structural & site trades ─────────────────────────────────────────────

@@ -124,7 +124,16 @@ function enrichFromHatMetadata(guide: HatArchetypeGuide, hat: IndustryHat): HatA
   if (hat.description && !grillOn.includes(hat.description)) {
     grillOn.unshift(hat.description);
   }
-  const grillCap = hat.id === "architect" ? 28 : 12;
+  const expandedGrillHats = new Set([
+    "architect",
+    "bim_vdc_coordinator",
+    "structural_engineer",
+    "mechanical_engineer",
+    "superintendent",
+    "construction_manager",
+    "owners_project_manager",
+  ]);
+  const grillCap = expandedGrillHats.has(hat.id) ? 28 : 12;
   return {
     ...guide,
     grillOn: [...new Set(grillOn)].slice(0, grillCap),
@@ -162,11 +171,24 @@ export function formatHatArchetypeBlock(hat: IndustryHat): string {
     `Punchline energy (do not copy verbatim): ${g.angles.join(" | ")}`,
     "The roast must sound like an insider mocking THIS hat — not a generic AEC burn or an adjacent discipline.",
   ];
-  if (hat.id === "architect") {
-    lines.push(
+  const varietyHints: Record<string, string> = {
+    architect:
       "VARIETY: Pick a DIFFERENT trope each roast — rotate across stairs, curtain wall, ceiling height, door hardware, VE, site visits, charrettes, sheet index, waterproofing, cantilever, RCP tricks, punch list language, etc. Do not default to render-vs-headroom every time.",
-    );
-  }
+    bim_vdc_coordinator:
+      "VARIETY: Rotate across LOD slides, clash reports, BEP fiction, federated model divorce, issue tracker theater, Revit crashes, 4D vs field, IFC handoffs, clash names — not the same LOD joke every roast.",
+    structural_engineer:
+      "VARIETY: Rotate across SEE STRUCTURAL, Friday stamp, verify-in-field, pin connections, calcs vs sheet, steel detailer deferrals, deflection, connection details, sketch-on-PDF — not the same stamp joke every roast.",
+    mechanical_engineer:
+      "VARIETY: Rotate across plenum war, ceiling height lie, equipment schedule, Copy of Copy of Duct, RCP hide-and-seek, load calcs vs VE, panel room size, NOT FOR CONSTRUCTION — not the same plenum joke every roast.",
+    superintendent:
+      "VARIETY: Rotate across daily report waiting-on-design, RFI photos, tape measure vs sketch, sequence vs weather, toolbox talk, field sketch art, mobilized on wrong sheet — not the same RFI joke every roast.",
+    construction_manager:
+      "VARIETY: Rotate across meetings-about-meetings, Gantt astrology, RAID screams DESIGN, blame matrix, recovery narrative, float ghosted, lookahead fiction — not the same meeting joke every roast.",
+    owners_project_manager:
+      "VARIETY: Rotate across stakeholder alignment fiction, change review loops, budget spreadsheet vs reality, vendor coordination, owner directive translation — not the same budget joke every roast.",
+  };
+  const variety = varietyHints[hat.id];
+  if (variety) lines.push(variety);
   return lines.join("\n");
 }
 

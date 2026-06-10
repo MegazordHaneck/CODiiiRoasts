@@ -1,5 +1,19 @@
 import type { Intensity } from "../types";
 import { ARCHITECT_MEAN_LINES, ARCHITECT_ROAST_LINES } from "./industry/architectVariety";
+import { BIM_ROAST_LINES } from "./industry/bimVariety";
+import { MEP_ROAST_LINES } from "./industry/mepVariety";
+import { PM_ROAST_LINES } from "./industry/pmVariety";
+import { STRUCTURAL_ROAST_LINES } from "./industry/structuralVariety";
+import { SUPERINTENDENT_ROAST_LINES } from "./industry/superintendentVariety";
+import {
+  CIVIL_ROAST_LINES,
+  COMMISSIONING_ROAST_LINES,
+  ENVELOPE_ROAST_LINES,
+  ESTIMATOR_ROAST_LINES,
+  MEP_TRADE_ROAST_LINES,
+  REGULATORY_ROAST_LINES,
+  SUSTAINABILITY_ROAST_LINES,
+} from "./industry/tradeVariety";
 import type { RolePoolKey } from "./roast-pools";
 
 /** Long-form mean mode — vivid, 3-beat, share-safe profanity */
@@ -146,37 +160,78 @@ export const STEREOTYPE_CREATIVE: {
       nsfw: ARCHITECT_ROAST_LINES.nsfw,
     },
     engineer: {
-      light: [
-        "Hi {name}! Your connection detail is a novel — the built connection is improv.",
-      ],
-      contractor: [
-        "Hi {name}! You stamp Friday — Monday inherits deflection and regret.",
-      ],
-      nuclear: [
-        "Hi {name}! 'Verify in field' is your autobiography in three words.",
-        "Hi {name}! Your calcs are fine — your dimensions are cosplay.",
-      ],
+      light: STRUCTURAL_ROAST_LINES.light,
+      contractor: STRUCTURAL_ROAST_LINES.contractor,
+      nuclear: STRUCTURAL_ROAST_LINES.nuclear,
     },
     contractor: {
       light: [
         "Hi {name}! Your truck sticker energy is strong — your drawing trust energy is not.",
       ],
       nuclear: [
-        "Hi {name}! You swing that hammer like a F@#%N red squirrel — respectfully.",
-        "Hi {name}! Your daily report is a religion called Waiting on Design.",
+        "Hi {name}! You mobilized on optimism and a drawing from 2019.",
+        "Hi {name}! Your daily report is 'waiting on design' in bold.",
       ],
     },
     "bim manager": {
-      nuclear: [
-        "Hi {name}! Your clash report is a binge-worthy tragedy.",
-        "Hi {name}! LOD 500 on the slide — LOD panic in the plenum.",
-      ],
+      light: BIM_ROAST_LINES.light,
+      contractor: BIM_ROAST_LINES.contractor,
+      nuclear: BIM_ROAST_LINES.nuclear,
+    },
+    pm: {
+      light: PM_ROAST_LINES.light,
+      contractor: PM_ROAST_LINES.contractor,
+      nuclear: PM_ROAST_LINES.nuclear,
     },
     gc: {
-      nuclear: [
-        "Hi {name}! Float ghosted you — you still send it flowers.",
-        "Hi {name}! Your blame matrix is a rainbow of avoiding you.",
-      ],
+      light: PM_ROAST_LINES.light,
+      contractor: PM_ROAST_LINES.contractor,
+      nuclear: PM_ROAST_LINES.nuclear,
+    },
+    mep: {
+      light: MEP_ROAST_LINES.light,
+      contractor: MEP_ROAST_LINES.contractor,
+      nuclear: MEP_ROAST_LINES.nuclear,
+    },
+    civil: {
+      light: CIVIL_ROAST_LINES.light,
+      contractor: CIVIL_ROAST_LINES.contractor,
+      nuclear: CIVIL_ROAST_LINES.nuclear,
+    },
+    mep_trade: {
+      light: MEP_TRADE_ROAST_LINES.light,
+      contractor: MEP_TRADE_ROAST_LINES.contractor,
+      nuclear: MEP_TRADE_ROAST_LINES.nuclear,
+    },
+    envelope: {
+      light: ENVELOPE_ROAST_LINES.light,
+      contractor: ENVELOPE_ROAST_LINES.contractor,
+      nuclear: ENVELOPE_ROAST_LINES.nuclear,
+    },
+    regulatory: {
+      light: REGULATORY_ROAST_LINES.light,
+      contractor: REGULATORY_ROAST_LINES.contractor,
+      nuclear: REGULATORY_ROAST_LINES.nuclear,
+    },
+    superintendent: {
+      light: SUPERINTENDENT_ROAST_LINES.light,
+      contractor: SUPERINTENDENT_ROAST_LINES.contractor,
+      nuclear: SUPERINTENDENT_ROAST_LINES.nuclear,
+    },
+    commissioning: {
+      light: COMMISSIONING_ROAST_LINES.light,
+      contractor: COMMISSIONING_ROAST_LINES.contractor,
+      nuclear: COMMISSIONING_ROAST_LINES.nuclear,
+    },
+    sustainability: {
+      light: SUSTAINABILITY_ROAST_LINES.light,
+      contractor: SUSTAINABILITY_ROAST_LINES.contractor,
+      nuclear: SUSTAINABILITY_ROAST_LINES.nuclear,
+    },
+    estimator: {
+      light: ESTIMATOR_ROAST_LINES.light,
+      contractor: ESTIMATOR_ROAST_LINES.contractor,
+      nuclear: ESTIMATOR_ROAST_LINES.nuclear,
     },
     owner: {
       nuclear: [

@@ -1,5 +1,19 @@
 import type { Intensity } from "../types";
 import { ARCHITECT_ROAST_LINES } from "./industry/architectVariety";
+import { BIM_ROAST_LINES } from "./industry/bimVariety";
+import { MEP_ROAST_LINES } from "./industry/mepVariety";
+import { PM_ROAST_LINES } from "./industry/pmVariety";
+import { STRUCTURAL_ROAST_LINES } from "./industry/structuralVariety";
+import { SUPERINTENDENT_ROAST_LINES } from "./industry/superintendentVariety";
+import {
+  CIVIL_ROAST_LINES,
+  COMMISSIONING_ROAST_LINES,
+  ENVELOPE_ROAST_LINES,
+  ESTIMATOR_ROAST_LINES,
+  MEP_TRADE_ROAST_LINES,
+  REGULATORY_ROAST_LINES,
+  SUSTAINABILITY_ROAST_LINES,
+} from "./industry/tradeVariety";
 import { getBurnExtensions } from "./burn-extensions";
 
 export type RolePoolKey =
@@ -111,22 +125,10 @@ const ROLE_POOLS: Record<RolePoolKey, Partial<Record<Intensity, string[]>>> = {
     nsfw: ARCHITECT_ROAST_LINES.nsfw,
   },
   engineer: {
-    light: [
-      "Hi {name}! Your redlines have redlines — it's turtles all the way down.",
-      "Hi {name}! Blue text is your love language.",
-    ],
-    contractor: [
-      "Hi {name}! The drawings were wrong eight minutes after mobilization.",
-      "Hi {name}! You found the error — after the concrete did.",
-    ],
-    nuclear: [
-      "Hi {name}! Your calcs are fine — the drawings are cosplaying as calcs.",
-      "Hi {name}! You stamp Friday — Monday inherits physics.",
-      "Hi {name}! 'Verify in field' is your autobiography.",
-      "Hi {name}! Your detail calls out everything except the actual problem.",
-      "Hi {name}! You treat load paths like suggestions.",
-      "Hi {name}! Your peer review is just trauma bonding with math.",
-    ],
+    light: STRUCTURAL_ROAST_LINES.light,
+    contractor: STRUCTURAL_ROAST_LINES.contractor,
+    nuclear: STRUCTURAL_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   contractor: {
     light: [
@@ -147,21 +149,10 @@ const ROLE_POOLS: Record<RolePoolKey, Partial<Record<Intensity, string[]>>> = {
     ],
   },
   gc: {
-    light: [
-      "Hi {name}! Your coordination meeting has a pre-game show.",
-      "Hi {name}! Your submittal log is a lifestyle.",
-    ],
-    contractor: [
-      "Hi {name}! Float is a concept you mention fondly in the past tense.",
-      "Hi {name}! Your OAC deck is RFIs wearing business casual.",
-    ],
-    nuclear: [
-      "Hi {name}! You promised float — float ghosted everyone.",
-      "Hi {name}! You herd cats — the cats are licensed trades.",
-      "Hi {name}! Your master schedule is fan fiction with logos.",
-      "Hi {name}! You don't run jobs — you host ongoing interventions.",
-      "Hi {name}! Your buyout is brave — your lookahead is poetry.",
-    ],
+    light: PM_ROAST_LINES.light,
+    contractor: PM_ROAST_LINES.contractor,
+    nuclear: PM_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   owner: {
     light: [
@@ -180,36 +171,16 @@ const ROLE_POOLS: Record<RolePoolKey, Partial<Record<Intensity, string[]>>> = {
     ],
   },
   "bim manager": {
-    light: [
-      "Hi {name}! Navisworks clashes are your social circle.",
-      "Hi {name}! Your federated model is a soap opera.",
-    ],
-    contractor: [
-      "Hi {name}! LOD on slides vs LOD in model — classic.",
-      "Hi {name}! Your clash report is a cry for help in 3D.",
-    ],
-    nuclear: [
-      "Hi {name}! LOD 400 on the deck, LOD 200 in the model.",
-      "Hi {name}! You don't coordinate — you host panic in 3D.",
-      "Hi {name}! Your clash names are funnier than the comedy channel.",
-      "Hi {name}! The model lied — you're still surprised, adorable.",
-    ],
+    light: BIM_ROAST_LINES.light,
+    contractor: BIM_ROAST_LINES.contractor,
+    nuclear: BIM_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   pm: {
-    light: [
-      "Hi {name}! Action items breeding action items — nature is beautiful.",
-      "Hi {name}! Your risk register is just 'design' highlighted.",
-    ],
-    contractor: [
-      "Hi {name}! Gantt is green — field citations needed.",
-      "Hi {name}! You minutes meetings — the meetings minute you.",
-    ],
-    nuclear: [
-      "Hi {name}! Meetings about meetings — structural irony.",
-      "Hi {name}! Your lookahead is astrology with logos.",
-      "Hi {name}! You sell certainty — you deliver suspense.",
-      "Hi {name}! Your RAID log is just screaming in columns.",
-    ],
+    light: PM_ROAST_LINES.light,
+    contractor: PM_ROAST_LINES.contractor,
+    nuclear: PM_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   specifier: {
     light: [
@@ -227,67 +198,58 @@ const ROLE_POOLS: Record<RolePoolKey, Partial<Record<Intensity, string[]>>> = {
     ],
   },
   civil: {
-    light: [
-      "Hi {name}! Your grading plan is poetry — your invert spot is a lie.",
-      "Hi {name}! You treat the survey like a suggestion until something doesn't fit.",
-    ],
-    contractor: [
-      "Hi {name}! Your utility coordination is a phone tree of despair.",
-      "Hi {name}! Your paving section shows smooth — the pothole shows truth.",
-    ],
-    nuclear: [
-      "Hi {name}! Your entitlement timeline is fan fiction with a stamp.",
-      "Hi {name}! You call it sitework — the AHJ calls it content.",
-    ],
+    light: CIVIL_ROAST_LINES.light,
+    contractor: CIVIL_ROAST_LINES.contractor,
+    nuclear: CIVIL_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   mep: {
-    light: [
-      "Hi {name}! Your reflected ceiling plan is where MEP goes to hide.",
-      "Hi {name}! You love a plenum — the plenum doesn't love you back.",
-    ],
-    contractor: [
-      "Hi {name}! Your equipment submittal is 'or equal' gymnastics.",
-      "Hi {name}! Your coordination on ceiling height is a war crime — professionally.",
-    ],
-    nuclear: [
-      "Hi {name}! Your design drawings start with NOT FOR CONSTRUCTION — honest.",
-      "Hi {name}! You coordinate MEP like jazz — nobody knows the key.",
-    ],
+    light: MEP_ROAST_LINES.light,
+    contractor: MEP_ROAST_LINES.contractor,
+    nuclear: MEP_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   mep_trade: {
-    light: ["Hi {name}! Your rough-in is where design dreams go to die."],
-    contractor: ["Hi {name}! Your TAB report is truth — your coordination was fiction."],
-    nuclear: ["Hi {name}! You own the plenum — the architect thought it was decorative."],
+    light: MEP_TRADE_ROAST_LINES.light,
+    contractor: MEP_TRADE_ROAST_LINES.contractor,
+    nuclear: MEP_TRADE_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   envelope: {
-    light: ["Hi {name}! Your air barrier detail is a rumor at the laps."],
-    contractor: ["Hi {name}! Your cladding mock-up passed — the field failed."],
-    nuclear: ["Hi {name}! Water found the gap — it left a review."],
+    light: ENVELOPE_ROAST_LINES.light,
+    contractor: ENVELOPE_ROAST_LINES.contractor,
+    nuclear: ENVELOPE_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   regulatory: {
-    light: ["Hi {name}! Your plan check comment is the real schedule."],
-    contractor: ["Hi {name}! You are the AHJ — fear is justified."],
-    nuclear: ["Hi {name}! Your redlines are petty — and undefeated."],
+    light: REGULATORY_ROAST_LINES.light,
+    contractor: REGULATORY_ROAST_LINES.contractor,
+    nuclear: REGULATORY_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   superintendent: {
-    light: ["Hi {name}! Your daily huddle is stand-up about design."],
-    contractor: ["Hi {name}! You trust the tape measure more than the architect."],
-    nuclear: ["Hi {name}! You swing that hammer like a F@#%N red squirrel — respect."],
+    light: SUPERINTENDENT_ROAST_LINES.light,
+    contractor: SUPERINTENDENT_ROAST_LINES.contractor,
+    nuclear: SUPERINTENDENT_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   commissioning: {
-    light: ["Hi {name}! Your functional test is where design sins surface."],
-    contractor: ["Hi {name}! Your Cx checklist is longer than the O&M manual."],
-    nuclear: ["Hi {name}! You commission systems — you decommission optimism."],
+    light: COMMISSIONING_ROAST_LINES.light,
+    contractor: COMMISSIONING_ROAST_LINES.contractor,
+    nuclear: COMMISSIONING_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   sustainability: {
-    light: ["Hi {name}! Your LEED score is high — your envelope isn't."],
-    contractor: ["Hi {name}! Your energy model is poetry — the meter is prose."],
-    nuclear: ["Hi {name}! You sell carbon — you deliver RFIs."],
+    light: SUSTAINABILITY_ROAST_LINES.light,
+    contractor: SUSTAINABILITY_ROAST_LINES.contractor,
+    nuclear: SUSTAINABILITY_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   estimator: {
-    light: ["Hi {name}! Your takeoff assumes the drawing is telling the truth."],
-    contractor: ["Hi {name}! Your allowance for design revisions is cute."],
-    nuclear: ["Hi {name}! Your bid is art — the buyout is tragedy."],
+    light: ESTIMATOR_ROAST_LINES.light,
+    contractor: ESTIMATOR_ROAST_LINES.contractor,
+    nuclear: ESTIMATOR_ROAST_LINES.nuclear,
+    nsfw: [],
   },
   default: {
     light: UNIVERSAL.light,
