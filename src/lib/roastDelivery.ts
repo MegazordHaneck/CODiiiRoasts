@@ -52,10 +52,10 @@ export function normalizeRoastDelivery(roast: string, ctx: RoastDeliveryContext)
   if (!text) return text;
 
   const badNameVariants = new Set<string>();
-  badNameVariants.add(ctx.name.trim());
-  badNameVariants.add(facts.name);
-  badNameVariants.add(`${facts.name} from`);
-  badNameVariants.add(`${ctx.name.trim()} from`);
+  for (const raw of [ctx.name.trim(), facts.name]) {
+    const cleaned = cleanAttendeeName(raw);
+    if (cleaned.length >= 2) badNameVariants.add(cleaned);
+  }
   for (const raw of ctx.name.split(/\s+/)) {
     if (/^from$/i.test(raw)) badNameVariants.add(raw);
   }
@@ -65,6 +65,8 @@ export function normalizeRoastDelivery(roast: string, ctx: RoastDeliveryContext)
     const escaped = bad.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
     text = text.replace(new RegExp(`\\b${escaped}\\b`, "gi"), facts.name);
   }
+
+  text = fixNameCompanyPhrase(text, facts);
 
   text = text
     .replace(/\bfrom,\s*/gi, "")
@@ -160,15 +162,36 @@ function softenProfanityForIntensity(text: string): string {
     .replace(/B#@\\$H/gi, "mess");
 }
 
+function attendeeCallout(facts: AttendeeFacts): string {
+  return facts.company?.trim() ? `${facts.name} from ${facts.company.trim()}` : facts.name;
+}
+
+/** "Dennis OQULi" → "Dennis from OQULi" when company is known. */
+function fixNameCompanyPhrase(text: string, facts: AttendeeFacts): string {
+  const company = facts.company?.trim();
+  if (!company) return text;
+  const name = escapeRe(facts.name);
+  const co = escapeRe(company);
+  return text.replace(
+    new RegExp(`\\b(${name})\\s+(?!from\\s)(${co})\\b`, "gi"),
+    `$1 from $2`,
+  );
+}
+
 function ensureSpeakableOpener(text: string, facts: AttendeeFacts): string {
+  const callout = attendeeCallout(facts);
   const firstName = facts.name.split(/\s+/)[0] ?? facts.name;
   const lower = text.toLowerCase();
-  if (lower.includes(firstName.toLowerCase()) || lower.includes(facts.name.toLowerCase())) {
+  if (
+    lower.includes(callout.toLowerCase()) ||
+    lower.includes(firstName.toLowerCase()) ||
+    lower.includes(facts.name.toLowerCase())
+  ) {
     return text;
   }
 
   const rest = text.charAt(0).toLowerCase() + text.slice(1);
-  return `${facts.name}, ${rest}`;
+  return `${callout}, ${rest}`;
 }
 
 /** Quick sanity flags for admin/debug — not used to regenerate. */
@@ -179,6 +202,8 @@ export function deliveryIssues(roast: string, ctx: RoastDeliveryContext): string
   if (/\b(designs|builds|manages)\s+\w/i.test(roast) && !facts.role.includes("designer")) {
     issues.push("verb-phrase-role");
   }
-  if (roast.includes(`${facts.name} from`)) issues.push("name-includes-from");
+  if (facts.company && new RegExp(`\\b${escapeRe(facts.name)}\\s+${escapeRe(facts.company)}\\b`, "i").test(roast)) {
+    issues.push("name-company-missing-from");
+  }
   return issues;
 }

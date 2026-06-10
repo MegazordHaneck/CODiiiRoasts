@@ -34,7 +34,3 @@ export const SHARE_PLATFORMS: {
   { id: "twitter", label: "X / Twitter", hint: "Share card image + caption — pick X in the menu" },
 ];
 
-/** Booth phone flow — Instagram, LinkedIn, Facebook only. */
-export const PHONE_SHARE_PLATFORMS = SHARE_PLATFORMS.filter((p) =>
-  (["instagram", "linkedin", "facebook"] as SharePlatform[]).includes(p.id),
-);

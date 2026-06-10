@@ -1,10 +1,7 @@
 import { useCallback, useState } from "react";
-import {
-  buildShareCaption,
-  PHONE_SHARE_PLATFORMS,
-  SHARE_PLATFORMS,
-  type SharePlatform,
-} from "../lib/shareCaption";
+import { composeShareImage } from "../lib/composeShareImage";
+import { copyTextReliable } from "../lib/copyText";
+import { buildShareCaption, SHARE_PLATFORMS } from "../lib/shareCaption";
 import styles from "./ShareActions.module.css";
 
 type Props = {
@@ -21,15 +18,10 @@ export function ShareActions({ roast, getPngBlob, fileName, compact = false, pho
   const [copied, setCopied] = useState(false);
   const [status, setStatus] = useState<string | null>(null);
   const [showCaption, setShowCaption] = useState(phone);
-  const platforms = phone ? PHONE_SHARE_PLATFORMS : SHARE_PLATFORMS;
+  const platforms = SHARE_PLATFORMS;
 
   const copyCaptionToClipboard = useCallback(async (): Promise<boolean> => {
-    try {
-      await navigator.clipboard.writeText(caption);
-      return true;
-    } catch {
-      return false;
-    }
+    return copyTextReliable(caption);
   }, [caption]);
 
   const copyCaption = useCallback(async () => {
@@ -58,85 +50,85 @@ export function ShareActions({ roast, getPngBlob, fileName, compact = false, pho
     return blob;
   }, [getPngBlob, fileName]);
 
-  /** Card PNG + caption via the system share sheet — same flow for every network. */
-  const shareCardReady = useCallback(
-    async (platformLabel?: string) => {
-      setStatus(null);
-      await copyCaptionToClipboard();
+  /** Card PNG with caption baked in + clipboard copy for the post text field. */
+  const shareCardReady = useCallback(async () => {
+    setStatus(null);
+    const captionCopied = await copyCaptionToClipboard();
 
-      const blob = await getPngBlob();
-      if (!blob) {
-        setStatus("Could not load your card. Try again in a moment.");
+    const cardBlob = await getPngBlob();
+    if (!cardBlob) {
+      setStatus("Could not load your card. Try again in a moment.");
+      return;
+    }
+
+    const shareBlob = phone ? await composeShareImage(cardBlob, caption) : cardBlob;
+    const file = new File([shareBlob], fileName, { type: "image/png" });
+
+    // Many apps (Instagram especially) ignore `text` when `files` is set — caption is on the image + clipboard.
+    const shareData: ShareData = { text: caption, files: [file] };
+
+    if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
+      try {
+        await navigator.share(shareData);
+        setStatus(
+          captionCopied
+            ? "Pick your app and post. Caption is on the image — paste if the text field is empty."
+            : "Pick your app and post. Caption is on the image — copy it below if the text field is empty.",
+        );
         return;
-      }
-
-      const file = new File([blob], fileName, { type: "image/png" });
-      const shareData: ShareData = {
-        title: "Roasted by CODiii",
-        text: caption,
-        files: [file],
-      };
-
-      if (navigator.share && (!navigator.canShare || navigator.canShare(shareData))) {
-        try {
-          await navigator.share(shareData);
-          setStatus(
-            platformLabel
-              ? `Choose ${platformLabel} — your card and caption are ready. Review and post.`
-              : "Choose your app — your card and caption are ready. Review and post.",
-          );
+      } catch (err) {
+        if (err instanceof Error && err.name === "AbortError") {
+          setStatus(null);
           return;
-        } catch (err) {
-          if (err instanceof Error && err.name === "AbortError") {
-            setStatus(null);
-            return;
-          }
         }
       }
+    }
 
-      await downloadImage();
-      setStatus(
-        platformLabel
-          ? `Card saved and caption copied. Open ${platformLabel}, add the image, paste the caption, and post.`
-          : "Card saved and caption copied. Open your social app, add the image, paste the caption, and post.",
-      );
-    },
-    [caption, copyCaptionToClipboard, downloadImage, fileName, getPngBlob],
-  );
+    const url = URL.createObjectURL(shareBlob);
+    const link = document.createElement("a");
+    link.download = fileName;
+    link.href = url;
+    link.click();
+    URL.revokeObjectURL(url);
+    if (!captionCopied) await copyCaptionToClipboard();
+    setStatus("Card saved. Paste the caption below if your app did not fill it in.");
+  }, [caption, copyCaptionToClipboard, fileName, getPngBlob, phone]);
 
-  const openPlatform = useCallback(
-    (platform: SharePlatform) => {
-      const meta = platforms.find((p) => p.id === platform);
-      void shareCardReady(meta?.label);
-    },
-    [platforms, shareCardReady],
-  );
+  const openPlatform = useCallback(() => {
+    void shareCardReady();
+  }, [shareCardReady]);
 
   return (
     <div className={`${styles.wrap} ${compact ? styles.wrapCompact : ""} ${phone ? styles.wrapPhone : ""}`}>
-      <p className={styles.heading}>{phone ? "Share to your socials" : "Post to"}</p>
+      <p className={styles.heading}>{phone ? "Share your roast" : "Post to"}</p>
       {phone && (
         <p className={styles.subheading}>
-          Tap a network — your roast card image and caption load into the share menu. Pick the app, review, and
-          post.
+          Opens your share menu with the roast card and caption. Caption is printed on the image and copied — paste
+          only if your app leaves the text field blank.
         </p>
       )}
 
-      <div
-        className={`${styles.platforms} ${compact ? styles.platformsCompact : ""} ${phone ? styles.platformsPhone : ""}`}
-      >
-        {platforms.map((p) => (
-          <button
-            key={p.id}
-            type="button"
-            className={`${styles.platformBtn} ${styles[p.id]} ${phone ? styles.platformBtnPhone : ""}`}
-            onClick={() => openPlatform(p.id)}
-            title={p.hint}
-          >
-            {phone ? p.label : compact ? p.label.split(" / ")[0] : p.label}
-          </button>
-        ))}
-      </div>
+      {phone ? (
+        <button type="button" className={styles.sharePrimary} onClick={() => void shareCardReady()}>
+          Share card + caption
+        </button>
+      ) : (
+        <div
+          className={`${styles.platforms} ${compact ? styles.platformsCompact : ""}`}
+        >
+          {platforms.map((p) => (
+            <button
+              key={p.id}
+              type="button"
+              className={`${styles.platformBtn} ${styles[p.id]}`}
+              onClick={() => openPlatform()}
+              title={p.hint}
+            >
+              {compact ? p.label.split(" / ")[0] : p.label}
+            </button>
+          ))}
+        </div>
+      )}
 
       {!compact && !phone && (
         <button type="button" className={styles.sharePrimary} onClick={() => void shareCardReady()}>
@@ -170,7 +162,7 @@ export function ShareActions({ roast, getPngBlob, fileName, compact = false, pho
       {(!compact || showCaption) && (
         <div className={`${styles.captionPreview} ${compact ? styles.captionCompact : ""} ${phone ? styles.captionPhone : ""}`}>
           <span className={styles.captionLabel}>
-            {phone ? "Included in your share (also copied as backup)" : "Your post text"}
+            {phone ? "Caption (copied when you share — paste if needed)" : "Your post text"}
           </span>
           <pre className={styles.captionText}>{caption}</pre>
         </div>
