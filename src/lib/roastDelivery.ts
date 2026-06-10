@@ -2,12 +2,16 @@ import type { Intensity } from "../types";
 import { parseIntro } from "./parseIntro";
 import { isVerbPhraseRole, professionFromDesignWork, cleanAttendeeName } from "./rolePhrase";
 
-const MAX_ROAST_CHARS: Record<Intensity, number> = {
+/** Soft length targets for prompts — delivery never chops a landed punchline to hit these. */
+export const TARGET_ROAST_CHARS: Record<Intensity, number> = {
   light: 120,
   contractor: 150,
   nuclear: 180,
   nsfw: 200,
 };
+
+/** Safety valve for runaway API ramble only — well above normal one-liners. */
+const ABSOLUTE_ROAST_CHARS = 360;
 
 export type RoastDeliveryContext = {
   name: string;
@@ -91,8 +95,8 @@ export function normalizeRoastDelivery(roast: string, ctx: RoastDeliveryContext)
   return text.trim();
 }
 
-/** Keep roasts to a single speakable line — trims API/fallback ramble. */
-export function clampToOneSentence(text: string, intensity: Intensity = "contractor"): string {
+/** Keep roasts to a single speakable line — trims API ramble, never mid-burn. */
+export function clampToOneSentence(text: string, _intensity: Intensity = "contractor"): string {
   let t = text.trim();
   if (!t) return t;
 
@@ -100,18 +104,41 @@ export function clampToOneSentence(text: string, intensity: Intensity = "contrac
 
   const sentenceEnd = t.search(/[.!?](?:\s|$|")/);
   if (sentenceEnd >= 0) {
-    t = t.slice(0, sentenceEnd + 1).trim();
+    const after = t.slice(sentenceEnd + 1).trim();
+    if (after.length > 0) {
+      t = t.slice(0, sentenceEnd + 1).trim();
+    }
   }
 
-  const max = MAX_ROAST_CHARS[intensity];
-  if (t.length > max) {
-    const cut = t.slice(0, max - 1);
-    const lastSpace = cut.lastIndexOf(" ");
-    t = `${(lastSpace > 40 ? cut.slice(0, lastSpace) : cut).trim()}…`;
-    if (!/[.!?]$/.test(t)) t += ".";
+  if (t.length > ABSOLUTE_ROAST_CHARS) {
+    t = trimRunawayRoast(t, ABSOLUTE_ROAST_CHARS);
   }
 
   return t;
+}
+
+/** Last resort when the API returns a paragraph-sized single line. */
+function trimRunawayRoast(text: string, max: number): string {
+  let bestEnd = -1;
+  for (const m of text.matchAll(/[.!?](?:\s|$|")/g)) {
+    const end = (m.index ?? 0) + 1;
+    if (end <= max) bestEnd = end;
+    else break;
+  }
+  if (bestEnd > 0) return text.slice(0, bestEnd).trim();
+
+  for (const sep of [" — ", " – ", "; "]) {
+    const idx = text.lastIndexOf(sep, max - 1);
+    if (idx > max * 0.45) {
+      const chunk = text.slice(0, idx).trim();
+      return /[.!?]$/.test(chunk) ? chunk : `${chunk}.`;
+    }
+  }
+
+  const cut = text.slice(0, max - 1);
+  const lastSpace = cut.lastIndexOf(" ");
+  const trimmed = (lastSpace > 40 ? cut.slice(0, lastSpace) : cut).trim();
+  return /[.!?]$/.test(trimmed) ? trimmed : `${trimmed}.`;
 }
 
 function escapeRe(s: string): string {

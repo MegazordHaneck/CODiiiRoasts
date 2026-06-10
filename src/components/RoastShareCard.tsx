@@ -21,6 +21,7 @@ const W = 540;
 const PHOTO_H = 340;
 const FOOTER_H = 280;
 const H = PHOTO_H + FOOTER_H;
+const CODIII_LAUGH_ICON = "/brand/codiii-laugh-icon.png";
 
 export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function RoastShareCard(
   { name, roast, photoUrl, qrUrl, compact = false, booth = false },
@@ -58,7 +59,12 @@ export const RoastShareCard = forwardRef<RoastShareCardHandle, Props>(function R
     ctx.fillRect(0, PHOTO_H - 80, W, 80);
 
     drawRoastedBadge(ctx);
-    drawCodiiiBrandPill(ctx);
+    try {
+      const icon = await loadImage(CODIII_LAUGH_ICON);
+      drawCodiiiLaughIcon(ctx, icon);
+    } catch {
+      drawCodiiiBrandPill(ctx);
+    }
 
     ctx.fillStyle = "#0a0a0a";
     ctx.fillRect(0, PHOTO_H, W, FOOTER_H);
@@ -181,6 +187,21 @@ function drawRoastedBadge(ctx: CanvasRenderingContext2D) {
   ctx.restore();
 }
 
+function drawCodiiiLaughIcon(ctx: CanvasRenderingContext2D, icon: HTMLImageElement) {
+  const size = 52;
+  const margin = 16;
+  const x = W - size - margin;
+  const y = PHOTO_H - size - margin;
+
+  ctx.save();
+  ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
+  ctx.shadowBlur = 12;
+  ctx.shadowOffsetY = 3;
+  ctx.drawImage(icon, x, y, size, size);
+  ctx.restore();
+}
+
+/** Text fallback if the brand icon fails to load. */
 function drawCodiiiBrandPill(ctx: CanvasRenderingContext2D) {
   const label = "CODiii";
   ctx.font = "bold 22px Inter, sans-serif";

@@ -61,8 +61,8 @@ ${exclude.length ? `\nBANNED — do not repeat or paraphrase:\n${exclude.map((r)
 Be specific to their intro. If intensity is nuclear, bring real heat.
 ${
   body.intensity === "nsfw"
-    ? `\nMEAN MODE — one vulgar sentence only (coordination meeting / detail section energy). Profanity OK. Not sexual. Under 200 chars.`
-    : `\nONE sentence only — no setup paragraph, no "And your…" second beat.`
+    ? `\nMEAN MODE — one vulgar sentence only (coordination meeting / detail section energy). Profanity OK. Not sexual. Land the full punchline.`
+    : `\nONE sentence only — land the full punchline; no setup paragraph, no "And your…" second beat.`
 }`;
 
   const response = await fetch("https://api.openai.com/v1/chat/completions", {
