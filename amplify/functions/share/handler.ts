@@ -3,6 +3,7 @@ import { GetObjectCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 import { corsHeaders } from "../roast/safety";
 import { isValidShareEmail, sendShareEmail } from "./email";
+import { captureLeadEmail, saveLead } from "./leads";
 
 const s3 = new S3Client({});
 const TTL_SECONDS = 60 * 60 * 48;
@@ -11,6 +12,8 @@ type CreateBody = {
   pngBase64: string;
   caption: string;
   name: string;
+  role?: string;
+  company?: string;
   roast?: string;
   email?: string;
   appOrigin?: string;
@@ -35,7 +38,13 @@ async function loadShareMeta(id: string, bucket: string) {
   );
   const metaRaw = await metaRes.Body?.transformToString();
   if (!metaRaw) throw new Error("missing meta");
-  return JSON.parse(metaRaw) as { caption: string; name: string; roast?: string };
+  return JSON.parse(metaRaw) as {
+    caption: string;
+    name: string;
+    role?: string;
+    company?: string;
+    roast?: string;
+  };
 }
 
 async function loadSharePng(id: string, bucket: string): Promise<Buffer> {
@@ -132,6 +141,15 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
         png,
       });
 
+      if (result.sent) {
+        await captureLeadEmail(id, email, {
+          name: meta.name,
+          role: meta.role,
+          company: meta.company,
+          sharePageUrl: pageUrl,
+        });
+      }
+
       return {
         statusCode: result.sent ? 200 : 503,
         headers: corsHeaders(),
@@ -161,10 +179,16 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
       };
     }
 
+    const name = (createBody.name ?? "Guest").slice(0, 80);
+    const role = (createBody.role ?? "").slice(0, 120);
+    const company = createBody.company?.trim().slice(0, 120);
+
     const meta = JSON.stringify({
       caption: createBody.caption.slice(0, 2000),
       roast: (createBody.roast ?? createBody.caption).slice(0, 2000),
-      name: (createBody.name ?? "Guest").slice(0, 80),
+      name,
+      role,
+      ...(company ? { company } : {}),
       createdAt: new Date().toISOString(),
     });
 
@@ -189,6 +213,19 @@ export const handler: APIGatewayProxyHandlerV2 = async (event) => {
     ]);
 
     const pageUrl = sharePageUrl(createBody.appOrigin, id);
+
+    await saveLead({
+      shareId: id,
+      name,
+      role,
+      company,
+      sharePageUrl: pageUrl,
+      email:
+        createBody.email?.trim() && isValidShareEmail(createBody.email)
+          ? createBody.email.trim()
+          : undefined,
+    });
+
     let emailSent = false;
     let emailError: string | undefined;
 

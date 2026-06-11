@@ -39,6 +39,8 @@ export function ShareScreen() {
       const link = await createShareLink({
         pngBase64,
         name: attendee.name,
+        role: attendee.role,
+        company: attendee.company,
         roast: roast.roast,
       });
       if (link) {

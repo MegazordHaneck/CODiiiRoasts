@@ -30,6 +30,8 @@ export function buildSharePageUrl(shareId: string): string {
 export async function createShareLink(input: {
   pngBase64: string;
   name: string;
+  role: string;
+  company?: string;
   roast: string;
   email?: string;
 }): Promise<ShareLinkResult | null> {
@@ -47,6 +49,8 @@ export async function createShareLink(input: {
         caption,
         roast: input.roast,
         name: input.name,
+        role: input.role,
+        company: input.company?.trim() || undefined,
         email: input.email?.trim() || undefined,
         appOrigin: typeof window !== "undefined" ? window.location.origin : undefined,
       }),

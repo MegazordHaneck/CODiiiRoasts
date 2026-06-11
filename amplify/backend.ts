@@ -1,5 +1,6 @@
 import { defineBackend } from "@aws-amplify/backend";
 import { Duration, RemovalPolicy } from "aws-cdk-lib";
+import { AttributeType, BillingMode, Table } from "aws-cdk-lib/aws-dynamodb";
 import { PolicyStatement } from "aws-cdk-lib/aws-iam";
 import { HttpMethods } from "aws-cdk-lib/aws-s3";
 import { Bucket } from "aws-cdk-lib/aws-s3";
@@ -27,13 +28,26 @@ const shareBucket = new Bucket(shareStack, "RoastShareBucket", {
 
 shareBucket.grantReadWrite(backend.share.resources.lambda);
 
+const leadsTable = new Table(shareStack, "RoastLeadsTable", {
+  partitionKey: { name: "shareId", type: AttributeType.STRING },
+  billingMode: BillingMode.PAY_PER_REQUEST,
+  removalPolicy: RemovalPolicy.RETAIN,
+});
+
+leadsTable.grantReadWriteData(backend.share.resources.lambda);
+
 backend.share.addEnvironment("SHARE_BUCKET_NAME", shareBucket.bucketName);
+backend.share.addEnvironment("LEADS_TABLE_NAME", leadsTable.tableName);
 backend.share.addEnvironment(
   "APP_ORIGIN",
   process.env.APP_ORIGIN ?? "https://roasts.codiii.com",
 );
 backend.share.addEnvironment("SHARE_FROM_EMAIL", process.env.SHARE_FROM_EMAIL ?? "");
 backend.share.addEnvironment("SES_REGION", process.env.SES_REGION ?? "ca-central-1");
+backend.share.addEnvironment(
+  "SLACK_LEADS_WEBHOOK_URL",
+  process.env.SLACK_LEADS_WEBHOOK_URL ?? "",
+);
 
 backend.share.resources.lambda.addToRolePolicy(
   new PolicyStatement({
